@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: erp
+  profiles:
+    active: default
