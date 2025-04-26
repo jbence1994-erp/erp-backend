@@ -3,6 +3,8 @@ erp
 
 ### Enterprise resource planning application.
 
+[![Continuous integration](https://github.com/jbence1994/erp/actions/workflows/build.yml/badge.svg)](https://github.com/jbence1994/erp/actions/workflows/build.yml)
+
 Prerequisites
 -------------
 
