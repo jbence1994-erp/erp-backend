@@ -23,7 +23,7 @@
 
         <!-- Maven plugin versions -->
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-        <flyway-maven-plugin.version>10.15.0</flyway-maven-plugin.version>
+        <flyway-maven-plugin.version>11.8.0</flyway-maven-plugin.version>
 
         <!-- JaCoCo properties -->
         <jacoco.line-coverage>1.00</jacoco.line-coverage>
