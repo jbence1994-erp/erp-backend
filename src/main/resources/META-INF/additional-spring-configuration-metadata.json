@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "file-extensions-config.allowed-extensions",
+      "description": "Allowed file extensions for photo upload.",
+      "sourceType": "com.github.jbence1994.erp.inventory.config.FileExtensionsConfig"
+    }
+  ]
+}

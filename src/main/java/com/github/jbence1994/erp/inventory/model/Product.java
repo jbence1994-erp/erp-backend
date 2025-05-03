@@ -7,13 +7,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,5 +44,9 @@ public class Product {
 
     public boolean hasPhoto() {
         return photoFileName != null;
+    }
+
+    public String getPhotoFileExtension() {
+        return StringUtils.getFilenameExtension(photoFileName);
     }
 }
