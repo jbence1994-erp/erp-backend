@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
-import static com.github.jbence1994.erp.inventory.config.FileConstants.PHOTO_FILE_NAME;
+import static com.github.jbence1994.erp.inventory.constant.FileConstants.PHOTO_FILE_NAME;
 
 @RestController
 @RequestMapping("/api/products/{productId}/photo")

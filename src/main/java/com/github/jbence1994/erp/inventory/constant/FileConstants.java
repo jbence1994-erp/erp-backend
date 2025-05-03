@@ -1,4 +1,4 @@
-package com.github.jbence1994.erp.inventory.config;
+package com.github.jbence1994.erp.inventory.constant;
 
 public final class FileConstants {
     public final static String UPLOADS_DIRECTORY_NAME = "uploads";

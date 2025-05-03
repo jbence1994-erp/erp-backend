@@ -9,8 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static com.github.jbence1994.erp.inventory.config.FileConstants.PHOTOS_SUBDIRECTORY_NAME;
-import static com.github.jbence1994.erp.inventory.config.FileConstants.UPLOADS_DIRECTORY_NAME;
+import static com.github.jbence1994.erp.inventory.constant.FileConstants.PHOTOS_SUBDIRECTORY_NAME;
+import static com.github.jbence1994.erp.inventory.constant.FileConstants.UPLOADS_DIRECTORY_NAME;
 
 @Component
 public class FileSystemUtils implements FileUtils {

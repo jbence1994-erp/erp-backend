@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.github.jbence1994.erp.inventory.config.FileConstants.PRODUCTS_SUBDIRECTORY_NAME;
+import static com.github.jbence1994.erp.inventory.constant.FileConstants.PRODUCTS_SUBDIRECTORY_NAME;
 
 @Service
 @AllArgsConstructor
