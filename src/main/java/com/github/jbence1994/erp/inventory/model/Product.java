@@ -1,4 +1,4 @@
-package com.github.jbence1994.erp.inventory;
+package com.github.jbence1994.erp.inventory.model;
 
 import java.math.BigDecimal;
 
