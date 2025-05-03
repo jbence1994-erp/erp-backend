@@ -22,6 +22,12 @@ Run project locally
 mvn clean install
 ```
 
+### Build database schema with test data with Flyway Maven plugin
+
+```bash
+mvn flyway:migrate
+```
+
 ### Starting application with Spring Boot Maven plugin
 
 ```bash
