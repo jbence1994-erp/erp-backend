@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "suppliers")
 public class Supplier {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
