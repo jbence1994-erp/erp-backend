@@ -25,5 +25,5 @@ mvn clean install
 ### Starting application with Spring Boot Maven plugin
 
 ```bash
-mvn spring-boot:run -Dspring-boot.run.profiles=default
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
