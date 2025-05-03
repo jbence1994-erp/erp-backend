@@ -65,6 +65,7 @@
                 <version>${jacoco.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>com/github/jbence1994/erp/inventory/model/*</exclude>
                         <exclude>com/github/jbence1994/erp/Application*</exclude>
                     </excludes>
                 </configuration>
