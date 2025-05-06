@@ -26,7 +26,7 @@
         <spring-dotenv.version>4.0.0</spring-dotenv.version>
 
         <!-- Maven plugin versions -->
-        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
+        <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <flyway-maven-plugin.version>11.8.0</flyway-maven-plugin.version>
 
