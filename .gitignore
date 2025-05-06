@@ -34,3 +34,6 @@ build/
 
 ### Photo uploads directory
 uploads/
+
+### .env file ###
+.env

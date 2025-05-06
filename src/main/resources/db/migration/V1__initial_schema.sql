@@ -5,7 +5,7 @@ USE erp;
 
 CREATE TABLE IF NOT EXISTS suppliers
 (
-    id    BIGINT(20)   NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id    BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name  VARCHAR(255) NOT NULL,
     phone VARCHAR(25),
     email VARCHAR(75)
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS suppliers
 
 CREATE TABLE IF NOT EXISTS products
 (
-    id              BIGINT(20)     NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id              BIGINT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name            VARCHAR(255)   NOT NULL,
     serial_number   VARCHAR(25),
     price           DECIMAL(10, 2) NOT NULL,
