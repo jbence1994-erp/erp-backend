@@ -36,6 +36,9 @@
         <jacoco.complexity-coverage>1.00</jacoco.complexity-coverage>
         <jacoco.method-coverage>1.00</jacoco.method-coverage>
         <jacoco.class-coverage>1.00</jacoco.class-coverage>
+
+        <!-- Flags -->
+        <flyway.skip>false</flyway.skip>
     </properties>
 
     <dependencies>
@@ -80,6 +83,21 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>skip-flyway-on-test</id>
+            <activation>
+                <property>
+                    <name>spring.profiles.active</name>
+                    <value>default</value>
+                </property>
+            </activation>
+            <properties>
+                <flyway.skip>true</flyway.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
@@ -206,6 +224,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skip>${flyway.skip}</skip>
                     <url>${FLYWAY_DATASOURCE_URL}</url>
                     <user>${FLYWAY_DATASOURCE_USER}</user>
                     <password>${FLYWAY_DATASOURCE_PASSWORD}</password>
