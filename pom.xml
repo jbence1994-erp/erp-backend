@@ -26,6 +26,7 @@
         <spring-dotenv.version>4.0.0</spring-dotenv.version>
 
         <!-- Maven plugin versions -->
+        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <flyway-maven-plugin.version>11.8.0</flyway-maven-plugin.version>
 
@@ -103,6 +104,24 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>${properties-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/.env</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
@@ -178,9 +197,9 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway-maven-plugin.version}</version>
                 <configuration>
-                    <url>jdbc:mysql://localhost:3306/erp?createDatabaseIfNotExist=true</url>
-                    <user>root</user>
-                    <password/>
+                    <url>${FLYWAY_DATASOURCE_URL}</url>
+                    <user>${FLYWAY_DATASOURCE_USER}</user>
+                    <password>${FLYWAY_DATASOURCE_PASSWORD}</password>
                     <cleanDisabled>false</cleanDisabled>
                 </configuration>
             </plugin>
