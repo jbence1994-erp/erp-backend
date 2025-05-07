@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.identity.service;
 
+import com.github.jbence1994.erp.identity.exception.ProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.repository.ProfileRepository;
 import com.github.jbence1994.erp.identity.util.PasswordManager;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_PASSWORD;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +42,37 @@ class ProfileServiceTests {
         assertThrows(
                 ProfileNotFoundException.class,
                 () -> profileService.getProfile(3L)
+        );
+    }
+
+    @Test
+    public void createProfileTest_HappyPath() {
+        when(profileRepository.findByUserId(any())).thenReturn(Optional.empty());
+        when(passwordManager.encode(any())).thenReturn(PROFILE_1_HASHED_PASSWORD);
+        when(profileRepository.save(any())).thenReturn(profile1());
+
+        var result = profileService.createProfile(profile1());
+
+        assertNotNull(result);
+        assertEquals(profile1().getId(), result.getId());
+        assertEquals(profile1().getUsername(), result.getUsername());
+        assertEquals(profile1().getPassword(), result.getPassword());
+        assertEquals(profile1().getPhotoFileName(), result.getPhotoFileName());
+        assertEquals(profile1().isDeleted(), result.isDeleted());
+        assertEquals(profile1().getUser().getId(), result.getUser().getId());
+        assertEquals(profile1().getUser().getFirstName(), result.getUser().getFirstName());
+        assertEquals(profile1().getUser().getLastName(), result.getUser().getLastName());
+        assertEquals(profile1().getUser().getEmail(), result.getUser().getEmail());
+    }
+
+    @Test
+    public void createProfileTest_UnhappyPath_ProfileAlreadyBeenCreatedForGivenUser() {
+        when(profileRepository.findByUserId(any())).thenReturn(Optional.of(profile1()));
+        when(profileRepository.save(any())).thenReturn(profile1());
+
+        assertThrows(
+                ProfileAlreadyExistException.class,
+                () -> profileService.createProfile(profile1())
         );
     }
 
