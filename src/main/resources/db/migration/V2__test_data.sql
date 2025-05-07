@@ -16,3 +16,19 @@ VALUES ('Wireless Mouse', 'WM-1001', 15.50, 'pcs', 'Ergonomic wireless mouse wit
        ('LED Desk Lamp', 'DL-8008', 22.50, 'pcs', 'LED desk lamp with adjustable brightness.', 4, 120, NULL),
        ('HD Webcam', 'WC-9009', 49.99, 'pcs', '1080p USB webcam with built-in mic.', 5, 65, NULL),
        ('Portable Speaker', 'PS-1010', 34.99, 'pcs', 'Bluetooth speaker with 10 h battery life.', 5, 90, NULL);
+
+INSERT INTO users (first_name, last_name, email)
+VALUES ('Alice', 'Smith', 'alice.smith@example.com'),
+       ('Bob', 'Johnson', 'bob.johnson@example.com'),
+       ('Charlie', 'Williams', 'charlie.williams@example.com'),
+       ('Diana', 'Brown', 'diana.brown@example.com');
+
+INSERT INTO profiles (username, password, photo_file_name, is_deleted, user_id)
+VALUES ('alice123', '$2a$10$HF7OVtgqLl7SQpb3Cdue.u.JNEtPmnzcHcXq5fqIp3VihXENxofNO', NULL, 0,
+        (SELECT id FROM users WHERE email = 'alice.smith@example.com')),
+       ('bobbyJ', '$2a$10$0Qhoqu0M5gl6zpWAc90QH.fz7JG8rjtE..VnVXSEQV15G3USUZAAu', NULL, 0,
+        (SELECT id FROM users WHERE email = 'bob.johnson@example.com')),
+       ('charlieW', '$2a$10$SNQfcKuFrPgXWGjeWotgLOVLs9VuNBdQllxwVYHZeZOdLhsruiB..', NULL, 0,
+        (SELECT id FROM users WHERE email = 'charlie.williams@example.com')),
+       ('dianaB', '$2a$10$mpQ8nod5twYJ7Mbx9zeKoecGbe14PxG6rgWEcRyL0WgXRzxnE5hkG', NULL, 1,
+        (SELECT id FROM users WHERE email = 'diana.brown@example.com'));
