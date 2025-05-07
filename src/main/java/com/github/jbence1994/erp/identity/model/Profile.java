@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 @Entity
 @Table(name = "profiles")
@@ -35,5 +36,9 @@ public class Profile {
 
     public boolean hasPhoto() {
         return photoFileName != null;
+    }
+
+    public String getPhotoFileExtension() {
+        return StringUtils.getFilenameExtension(photoFileName);
     }
 }

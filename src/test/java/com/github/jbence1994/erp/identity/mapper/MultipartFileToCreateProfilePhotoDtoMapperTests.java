@@ -1,6 +1,6 @@
-package com.github.jbence1994.erp.inventory.mapper;
+package com.github.jbence1994.erp.identity.mapper;
 
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
-class MultipartFileToCreateProductPhotoDtoMapperTests {
-    private final MultipartFileToCreateProductPhotoDtoMapper toProductPhotoDtoMapper = new MultipartFileToCreateProductPhotoDtoMapper();
+class MultipartFileToCreateProfilePhotoDtoMapperTests {
+    private final MultipartFileToCreateProfilePhotoDtoMapper toProfilePhotoDtoMapper = new MultipartFileToCreateProfilePhotoDtoMapper();
 
     @Test
     public void toDtoTest_HappyPath() throws IOException {
-        var result = toProductPhotoDtoMapper.toDto(1L, multipartFile());
+        var result = toProfilePhotoDtoMapper.toDto(1L, multipartFile());
 
-        assertEquals(1L, result.getProductId());
+        assertEquals(1L, result.getProfileId());
         assertEquals(multipartFile().isEmpty(), result.isEmpty());
         assertEquals(multipartFile().getOriginalFilename(), result.getOriginalFilename());
         assertEquals(multipartFile().getSize(), result.getSize());
@@ -34,8 +34,8 @@ class MultipartFileToCreateProductPhotoDtoMapperTests {
         doThrow(new IOException("Disk error")).when(multipartFile).getBytes();
 
         assertThrows(
-                ProductPhotoUploadException.class,
-                () -> toProductPhotoDtoMapper.toDto(1L, multipartFile)
+                ProfilePhotoUploadException.class,
+                () -> toProfilePhotoDtoMapper.toDto(1L, multipartFile)
         );
     }
 }

@@ -1,9 +1,9 @@
-package com.github.jbence1994.erp.inventory.validation;
+package com.github.jbence1994.erp.common.validation;
 
+import com.github.jbence1994.erp.common.config.FileExtensionsConfig;
 import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
-import com.github.jbence1994.erp.inventory.config.FileExtensionsConfig;
-import com.github.jbence1994.erp.inventory.exception.EmptyFileException;
-import com.github.jbence1994.erp.inventory.exception.InvalidFileExtensionException;
+import com.github.jbence1994.erp.common.exception.EmptyFileException;
+import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,17 +12,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.ALLOWED_FILE_EXTENSIONS;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.BMP;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.FILE_NAME_BMP;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.FILE_NAME_JPEG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.FILE_NAME_JPG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.FILE_NAME_PNG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.INVALID_FILE_NAME;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.JPEG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.JPG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.PNG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.TXT;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.ALLOWED_FILE_EXTENSIONS;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.BMP;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_BMP;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_JPEG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_JPG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_PNG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.INVALID_FILE_NAME;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PNG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TXT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;

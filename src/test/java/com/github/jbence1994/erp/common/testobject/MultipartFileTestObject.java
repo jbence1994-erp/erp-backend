@@ -1,13 +1,13 @@
-package com.github.jbence1994.erp.inventory.testobject;
+package com.github.jbence1994.erp.common.testobject;
 
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.CONTENT_TYPE_IMAGE_JPEG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.FILE_NAME_JPEG;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.FILE_SIZE;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.INVALID_FILE_NAME;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.TEXT_PLAIN;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.CONTENT_TYPE_IMAGE_JPEG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_JPEG;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_SIZE;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.INVALID_FILE_NAME;
+import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TEXT_PLAIN;
 
 public final class MultipartFileTestObject {
     public static MultipartFile multipartFile() {

@@ -1,4 +1,4 @@
-package com.github.jbence1994.erp.inventory.config;
+package com.github.jbence1994.erp.common.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

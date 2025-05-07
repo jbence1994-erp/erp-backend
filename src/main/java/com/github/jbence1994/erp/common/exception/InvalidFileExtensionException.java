@@ -1,4 +1,4 @@
-package com.github.jbence1994.erp.inventory.exception;
+package com.github.jbence1994.erp.common.exception;
 
 public class InvalidFileExtensionException extends RuntimeException {
     public InvalidFileExtensionException(String extension) {
