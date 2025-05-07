@@ -1,13 +1,13 @@
-package com.github.jbence1994.erp.inventory.controller;
+package com.github.jbence1994.erp.identity.controller;
 
 import com.github.jbence1994.erp.common.service.PhotoService;
+import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
+import com.github.jbence1994.erp.identity.mapper.MultipartFileToCreateProfilePhotoDtoMapper;
 import com.github.jbence1994.erp.inventory.exception.EmptyFileException;
 import com.github.jbence1994.erp.inventory.exception.InvalidFileExtensionException;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
-import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import com.github.jbence1994.erp.inventory.mapper.MultipartFileToCreateProductPhotoDtoMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,25 +27,24 @@ import java.util.Map;
 import static com.github.jbence1994.erp.common.constant.FileConstants.PHOTO_FILE_NAME;
 
 @RestController
-@RequestMapping("/api/products/{productId}/photo")
+@RequestMapping("/api/profiles/{profileId}/photo")
 @CrossOrigin
-public class ProductPhotoController {
-    @Qualifier("productPhotoService")
+public class ProfilePhotoController {
     private final PhotoService photoService;
-    private final MultipartFileToCreateProductPhotoDtoMapper toCreateProductPhotoDtoMapper;
+    private final MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper;
 
-    public ProductPhotoController(
-            @Qualifier("productPhotoService") PhotoService photoService,
-            MultipartFileToCreateProductPhotoDtoMapper toCreateProductPhotoDtoMapper
+    public ProfilePhotoController(
+            @Qualifier("profilePhotoService") PhotoService photoService,
+            MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper
     ) {
         this.photoService = photoService;
-        this.toCreateProductPhotoDtoMapper = toCreateProductPhotoDtoMapper;
+        this.toCreateProfilePhotoDtoMapper = toCreateProfilePhotoDtoMapper;
     }
 
     @GetMapping
-    public ResponseEntity<?> getProductPhoto(@PathVariable Long productId) {
+    public ResponseEntity<?> getProfilePhoto(@PathVariable Long profileId) {
         try {
-            var photo = photoService.getPhoto(productId);
+            var photo = photoService.getPhoto(profileId);
 
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
@@ -54,7 +53,7 @@ public class ProductPhotoController {
                     .status(HttpStatus.OK)
                     .headers(headers)
                     .body(photo.getPhotoBytes());
-        } catch (ProductPhotoNotFoundException exception) {
+        } catch (ProfilePhotoNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
@@ -62,31 +61,31 @@ public class ProductPhotoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> uploadProductPhoto(
-            @PathVariable Long productId,
+    public ResponseEntity<?> uploadProfilePhoto(
+            @PathVariable Long profileId,
             @RequestParam("file") MultipartFile file
     ) {
         try {
-            var productPhotoDto = toCreateProductPhotoDtoMapper.toDto(productId, file);
+            var profilePhotoDto = toCreateProfilePhotoDtoMapper.toDto(profileId, file);
 
-            var productPhotoFileName = photoService.uploadPhoto(productPhotoDto);
+            var profilePhotoFileName = photoService.uploadPhoto(profilePhotoDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(Map.of(PHOTO_FILE_NAME, productPhotoFileName));
-        } catch (ProductNotFoundException exception) {
+                    .body(Map.of(PHOTO_FILE_NAME, profilePhotoFileName));
+        } catch (ProfileNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         } catch (
                 EmptyFileException |
                 InvalidFileExtensionException |
-                ProductAlreadyHasPhotoUploadedException exception
+                ProfileAlreadyHasPhotoUploadedException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(exception.getMessage());
-        } catch (ProductPhotoUploadException exception) {
+        } catch (ProfilePhotoUploadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());
