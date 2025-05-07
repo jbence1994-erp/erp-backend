@@ -20,7 +20,6 @@ public interface PhotoTestConstants {
     String FILE_NAME_BMP = String.format("%s.%s", FILE_NAME, BMP);
     String INVALID_FILE_NAME = "file_name.txt";
     String TEXT_PLAIN = "text/plain";
-    String PHOTO_FILE_NAME_KEY = "photoFileName";
     String PHOTO_FILE_NAME = "7a759fbb-39d8-4b3b-af57-4266980901dc.jpeg";
     String UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY = "uploads/photos/products/";
 }

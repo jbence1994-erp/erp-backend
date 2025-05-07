@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.inventory.controller;
 
+import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.inventory.exception.EmptyFileException;
 import com.github.jbence1994.erp.inventory.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
@@ -16,13 +17,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.IMAGE;
 import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.PHOTO_FILE_NAME;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.PHOTO_FILE_NAME_KEY;
 import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.TXT;
 import static com.github.jbence1994.erp.inventory.testobject.CreateProductPhotoDtoTestObject.createProductPhotoDto;
 import static com.github.jbence1994.erp.inventory.testobject.MultipartFileTestObject.emptyMultipartFile;
@@ -76,7 +75,7 @@ class ProductPhotoControllerTests {
         var result = productPhotoController.uploadProductPhoto(1L, multipartFile());
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertEquals(Map.of(PHOTO_FILE_NAME_KEY, PHOTO_FILE_NAME), result.getBody());
+        assertEquals(new PhotoResponse(PHOTO_FILE_NAME), result.getBody());
     }
 
     private static Stream<Arguments> unhappyPathParams() {
