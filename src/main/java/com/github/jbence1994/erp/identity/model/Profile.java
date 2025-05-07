@@ -28,12 +28,12 @@ public class Profile {
 
     private String photoFileName;
 
-    private Boolean isDeleted;
+    private boolean isDeleted;
 
     @OneToOne
     private User user;
 
-    public Boolean hasPhoto() {
+    public boolean hasPhoto() {
         return photoFileName != null;
     }
 }
