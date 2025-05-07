@@ -1,14 +1,14 @@
 package com.github.jbence1994.erp.identity.controller;
 
 import com.github.jbence1994.erp.common.dto.PhotoResponse;
+import com.github.jbence1994.erp.common.exception.EmptyFileException;
+import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import com.github.jbence1994.erp.identity.mapper.MultipartFileToCreateProfilePhotoDtoMapper;
-import com.github.jbence1994.erp.inventory.exception.EmptyFileException;
-import com.github.jbence1994.erp.inventory.exception.InvalidFileExtensionException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

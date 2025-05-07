@@ -4,12 +4,12 @@ import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
 import com.github.jbence1994.erp.common.dto.PhotoDto;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.common.util.FileUtils;
+import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.identity.dto.CreateProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.ProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
-import com.github.jbence1994.erp.inventory.validation.FileValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

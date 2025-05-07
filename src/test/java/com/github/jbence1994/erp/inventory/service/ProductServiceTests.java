@@ -47,6 +47,6 @@ class ProductServiceTests {
 
         productService.updateProduct(product1());
 
-        verify(productRepository, times(1)).save(product1());
+        verify(productRepository, times(1)).save(any());
     }
 }

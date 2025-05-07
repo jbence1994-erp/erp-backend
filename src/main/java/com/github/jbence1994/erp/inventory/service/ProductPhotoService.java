@@ -4,12 +4,12 @@ import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
 import com.github.jbence1994.erp.common.dto.PhotoDto;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.common.util.FileUtils;
+import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import com.github.jbence1994.erp.inventory.validation.FileValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

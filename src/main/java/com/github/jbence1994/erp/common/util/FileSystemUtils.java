@@ -1,7 +1,6 @@
-package com.github.jbence1994.erp.inventory.util;
+package com.github.jbence1994.erp.common.util;
 
 import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
-import com.github.jbence1994.erp.common.util.FileUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

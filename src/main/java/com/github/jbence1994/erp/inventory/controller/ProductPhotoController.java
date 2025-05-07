@@ -1,9 +1,9 @@
 package com.github.jbence1994.erp.inventory.controller;
 
 import com.github.jbence1994.erp.common.dto.PhotoResponse;
+import com.github.jbence1994.erp.common.exception.EmptyFileException;
+import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.service.PhotoService;
-import com.github.jbence1994.erp.inventory.exception.EmptyFileException;
-import com.github.jbence1994.erp.inventory.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;

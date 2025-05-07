@@ -1,11 +1,11 @@
-package com.github.jbence1994.erp.inventory.service;
+package com.github.jbence1994.erp.identity.service;
 
 import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
-import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
+import com.github.jbence1994.erp.identity.dto.CreateProfilePhotoDto;
+import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,9 +14,9 @@ import java.io.IOException;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_SIZE;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY;
-import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1;
-import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1WithPhoto;
+import static com.github.jbence1994.erp.identity.constant.PhotoTestConstants.UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY;
+import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1;
+import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1WithPhoto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,20 +26,20 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ProductPhotoServiceTests {
-    private final ProductService productService = mock(ProductService.class);
+class ProfilePhotoServiceTests {
+    private final ProfileService profileService = mock(ProfileService.class);
     private final FileUtils fileUtils = mock(FileUtils.class);
     private final FileValidator fileValidator = mock(FileValidator.class);
-    private final ProductPhotoService productPhotoService = new ProductPhotoService(
-            productService,
+    private final ProfilePhotoService profilePhotoService = new ProfilePhotoService(
+            profileService,
             fileUtils,
             fileValidator
     );
-    private final CreateProductPhotoDto createProductPhotoDto = mock(CreateProductPhotoDto.class);
+    private final CreateProfilePhotoDto createProfilePhotoDto = mock(CreateProfilePhotoDto.class);
 
     @BeforeEach
     public void setup() {
-        when(productService.getProduct(any())).thenReturn(product1WithPhoto());
+        when(profileService.getProfile(any())).thenReturn(profile1WithPhoto());
 
         doNothing().when(fileValidator).validate(any());
     }
@@ -48,7 +48,7 @@ class ProductPhotoServiceTests {
     public void getPhotoTest_HappyPath() throws IOException {
         when(fileUtils.readAllBytes(any(), any())).thenReturn(new byte[FILE_SIZE]);
 
-        var result = productPhotoService.getPhoto(1L);
+        var result = profilePhotoService.getPhoto(1L);
 
         assertTrue(result.getPhotoBytes().length > 0);
         assertEquals(JPEG, result.getFileExtension());
@@ -59,40 +59,40 @@ class ProductPhotoServiceTests {
         when(fileUtils.readAllBytes(any(), any())).thenThrow(new IOException());
 
         assertThrows(
-                ProductPhotoNotFoundException.class,
-                () -> productPhotoService.getPhoto(1L)
+                ProfilePhotoNotFoundException.class,
+                () -> profilePhotoService.getPhoto(1L)
         );
     }
 
     @Test
     public void uploadPhotoTest_HappyPath() throws IOException {
-        when(productService.getProduct(any())).thenReturn(product1());
+        when(profileService.getProfile(any())).thenReturn(profile1());
         when(fileUtils.createPhotoUploadsDirectoryStructure(any()))
                 .thenReturn(UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY);
         when(fileUtils.storePhoto(any(), any())).thenReturn(PHOTO_FILE_NAME);
-        doNothing().when(productService).updateProduct(any());
+        doNothing().when(profileService).updateProfile(any());
 
-        var result = productPhotoService.uploadPhoto(createProductPhotoDto);
+        var result = profilePhotoService.uploadPhoto(createProfilePhotoDto);
 
         assertFalse(result.isBlank());
     }
 
     @Test
-    public void uploadPhotoTest_UnhappyPath_ProductAlreadyHasPhotoUploaded() {
+    public void uploadPhotoTest_UnhappyPath_ProfileAlreadyHasPhotoUploaded() {
         assertThrows(
-                ProductAlreadyHasPhotoUploadedException.class,
-                () -> productPhotoService.uploadPhoto(createProductPhotoDto)
+                ProfileAlreadyHasPhotoUploadedException.class,
+                () -> profilePhotoService.uploadPhoto(createProfilePhotoDto)
         );
     }
 
     @Test
-    public void uploadPhotoTest_UnhappyPath_ProductPhotoUploadFailure() throws IOException {
-        when(productService.getProduct(any())).thenReturn(product1());
+    public void uploadPhotoTest_UnhappyPath_ProfilePhotoUploadFailure() throws IOException {
+        when(profileService.getProfile(any())).thenReturn(profile1());
         when(fileUtils.storePhoto(any(), any())).thenThrow(new IOException("Disk error"));
 
         assertThrows(
-                ProductPhotoUploadException.class,
-                () -> productPhotoService.uploadPhoto(createProductPhotoDto)
+                ProfilePhotoUploadException.class,
+                () -> profilePhotoService.uploadPhoto(createProfilePhotoDto)
         );
     }
 }

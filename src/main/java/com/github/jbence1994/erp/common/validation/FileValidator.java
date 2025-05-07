@@ -1,9 +1,9 @@
-package com.github.jbence1994.erp.inventory.validation;
+package com.github.jbence1994.erp.common.validation;
 
+import com.github.jbence1994.erp.common.config.FileExtensionsConfig;
 import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
-import com.github.jbence1994.erp.inventory.config.FileExtensionsConfig;
-import com.github.jbence1994.erp.inventory.exception.EmptyFileException;
-import com.github.jbence1994.erp.inventory.exception.InvalidFileExtensionException;
+import com.github.jbence1994.erp.common.exception.EmptyFileException;
+import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

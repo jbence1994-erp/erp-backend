@@ -1,14 +1,14 @@
-package com.github.jbence1994.erp.inventory.controller;
+package com.github.jbence1994.erp.identity.controller;
 
 import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
-import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import com.github.jbence1994.erp.inventory.mapper.MultipartFileToCreateProductPhotoDtoMapper;
-import com.github.jbence1994.erp.inventory.service.ProductPhotoService;
+import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
+import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
+import com.github.jbence1994.erp.identity.mapper.MultipartFileToCreateProfilePhotoDtoMapper;
+import com.github.jbence1994.erp.identity.service.ProfilePhotoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,8 +26,8 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TXT;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.emptyMultipartFile;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.multipartFile;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.multipartFileWithInvalidFileExtension;
-import static com.github.jbence1994.erp.inventory.testobject.CreateProductPhotoDtoTestObject.createProductPhotoDto;
-import static com.github.jbence1994.erp.inventory.testobject.ProductPhotoDtoTestObject.productPhotoDto;
+import static com.github.jbence1994.erp.identity.testobject.CreateProfilePhotoDtoTestObject.createProfilePhotoDto;
+import static com.github.jbence1994.erp.identity.testobject.ProfilePhotoDtoTestObject.profilePhotoDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,21 +35,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ProductPhotoControllerTests {
-    private final ProductPhotoService productPhotoService = mock(ProductPhotoService.class);
-    private final MultipartFileToCreateProductPhotoDtoMapper toCreateProductPhotoDtoMapper = mock(MultipartFileToCreateProductPhotoDtoMapper.class);
-    private final ProductPhotoController productPhotoController = new ProductPhotoController(productPhotoService, toCreateProductPhotoDtoMapper);
+class ProfilePhotoControllerTests {
+    private final ProfilePhotoService profilePhotoService = mock(ProfilePhotoService.class);
+    private final MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper = mock(MultipartFileToCreateProfilePhotoDtoMapper.class);
+    private final ProfilePhotoController profilePhotoController = new ProfilePhotoController(profilePhotoService, toCreateProfilePhotoDtoMapper);
 
     @BeforeEach
     public void setup() {
-        when(toCreateProductPhotoDtoMapper.toDto(any(), any())).thenReturn(createProductPhotoDto());
+        when(toCreateProfilePhotoDtoMapper.toDto(any(), any())).thenReturn(createProfilePhotoDto());
     }
 
     @Test
-    public void getProductPhotoTest_HappyPath() {
-        when(productPhotoService.getPhoto(any())).thenReturn(productPhotoDto());
+    public void getProfilePhotoTest_HappyPath() {
+        when(profilePhotoService.getPhoto(any())).thenReturn(profilePhotoDto());
 
-        var result = productPhotoController.getProductPhoto(1L);
+        var result = profilePhotoController.getProfilePhoto(1L);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(IMAGE, result.getHeaders().getContentType().getType());
@@ -58,35 +58,35 @@ class ProductPhotoControllerTests {
     }
 
     @Test
-    public void getProductPhotoTest_UnhappyPath_ProductPhotoNotFound() {
-        when(productPhotoService.getPhoto(any())).thenThrow(new ProductPhotoNotFoundException(3L));
+    public void getProfilePhotoTest_UnhappyPath_ProfilePhotoNotFound() {
+        when(profilePhotoService.getPhoto(any())).thenThrow(new ProfilePhotoNotFoundException(3L));
 
-        var result = productPhotoController.getProductPhoto(3L);
+        var result = profilePhotoController.getProfilePhoto(3L);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertEquals("Termék a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel", result.getBody().toString());
+        assertEquals("Felhasználói fiók a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel", result.getBody().toString());
     }
 
     @Test
-    public void uploadProductPhotoTest_HappyPath() {
-        when(productPhotoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
+    public void uploadProfilePhotoTest_HappyPath() {
+        when(profilePhotoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
 
-        var result = productPhotoController.uploadProductPhoto(1L, multipartFile());
+        var result = profilePhotoController.uploadProfilePhoto(1L, multipartFile());
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(new PhotoResponse(PHOTO_FILE_NAME), result.getBody());
     }
 
-    private static Stream<Arguments> unhappyPathParams() {
+    static Stream<Arguments> unhappyPathParams() {
         return Stream.of(
                 Arguments.of(
-                        "ProductNotFoundException - HTTP 404",
-                        new ProductNotFoundException(3L),
+                        "ProfileNotFoundException - HTTP 404",
+                        new ProfileNotFoundException(3L),
                         3L,
                         multipartFile(),
                         HttpStatus.NOT_FOUND,
-                        "Termék a következő azonosítóval: #3 nem található"
+                        "Felhasználói fiók a következő azonosítóval: #3 nem található"
                 ),
                 Arguments.of(
                         "EmptyFileException - HTTP 400",
@@ -105,37 +105,37 @@ class ProductPhotoControllerTests {
                         "Hibás fájlformátum: .txt"
                 ),
                 Arguments.of(
-                        "ProductAlreadyHasPhotoUploadedException - HTTP 400",
-                        new ProductAlreadyHasPhotoUploadedException(1L),
+                        "ProfileAlreadyHasPhotoUploadedException - HTTP 400",
+                        new ProfileAlreadyHasPhotoUploadedException(1L),
                         1L,
                         multipartFile(),
                         HttpStatus.BAD_REQUEST,
-                        "Termék a következő azonosítóval: #1 már rendelkezik feltöltött fényképpel"
+                        "Felhasználói fiók a következő azonosítóval: #1 már rendelkezik feltöltött fényképpel"
                 ),
                 Arguments.of(
-                        "ProductPhotoUploadException - HTTP 500",
-                        new ProductPhotoUploadException(1L),
+                        "ProfilePhotoUploadException - HTTP 500",
+                        new ProfilePhotoUploadException(1L),
                         1L,
                         multipartFile(),
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép feltöltése az alábbi termékhez: #1 sikeretelen volt"
+                        "Fénykép feltöltése az alábbi felhasználói fiókhoz: #1 sikeretelen volt"
                 )
         );
     }
 
     @ParameterizedTest(name = "{index} => {0}")
     @MethodSource("unhappyPathParams")
-    public void uploadProductPhotoTest_UnhappyPaths(
+    public void uploadProfilePhotoTest_UnhappyPaths(
             String testCase,
             Exception exception,
-            Long productId,
+            Long profileId,
             MultipartFile multipartFile,
             HttpStatus httpStatus,
             String exceptionMessage
     ) {
-        when(productPhotoService.uploadPhoto(any())).thenThrow(exception);
+        when(profilePhotoService.uploadPhoto(any())).thenThrow(exception);
 
-        var result = productPhotoController.uploadProductPhoto(productId, multipartFile);
+        var result = profilePhotoController.uploadProfilePhoto(profileId, multipartFile);
 
         assertEquals(httpStatus, result.getStatusCode());
         assertEquals(exceptionMessage, result.getBody());
