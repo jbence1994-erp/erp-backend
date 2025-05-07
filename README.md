@@ -20,16 +20,10 @@ Run project locally
 Be sure to copy `.env.example` to `.env` and update it with your local database connection parameters before running the
 application.
 
-### Build application
+### Build application and database schema populating it with test data with Flyway Maven plugin
 
 ```bash
 mvn clean install
-```
-
-### Build database schema with test data with Flyway Maven plugin
-
-```bash
-mvn flyway:migrate
 ```
 
 ### Starting application with Spring Boot Maven plugin
