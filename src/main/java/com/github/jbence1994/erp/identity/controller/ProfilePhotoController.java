@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.identity.controller;
 
+import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
@@ -21,10 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Map;
-
-import static com.github.jbence1994.erp.common.constant.FileConstants.PHOTO_FILE_NAME;
 
 @RestController
 @RequestMapping("/api/profiles/{profileId}/photo")
@@ -72,7 +69,7 @@ public class ProfilePhotoController {
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(Map.of(PHOTO_FILE_NAME, profilePhotoFileName));
+                    .body(new PhotoResponse(profilePhotoFileName));
         } catch (ProfileNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
