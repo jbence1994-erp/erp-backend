@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.github.jbence1994.erp.identity.constant.FileConstants.PROFILES_SUBDIRECTORY_NAME;
-
 @Service
 @AllArgsConstructor
 public class ProfilePhotoService implements PhotoService {
     private final ProfileService profileService;
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
+
+    private static final String PROFILES_SUBDIRECTORY_NAME = "profiles";
 
     @Override
     public PhotoDto getPhoto(Long id) {

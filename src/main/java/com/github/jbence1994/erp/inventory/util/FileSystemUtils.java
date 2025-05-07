@@ -9,11 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-import static com.github.jbence1994.erp.common.constant.FileConstants.PHOTOS_SUBDIRECTORY_NAME;
-import static com.github.jbence1994.erp.common.constant.FileConstants.UPLOADS_DIRECTORY_NAME;
-
 @Component
 public class FileSystemUtils implements FileUtils {
+    private static final String UPLOADS_DIRECTORY_NAME = "uploads";
+    private static final String PHOTOS_SUBDIRECTORY_NAME = "photos";
+
     @Override
     public byte[] readAllBytes(String customSubdirectoryName, String fileName) throws IOException {
         var uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory = Paths.get(

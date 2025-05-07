@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.github.jbence1994.erp.inventory.constant.FileConstants.PRODUCTS_SUBDIRECTORY_NAME;
-
 @Service
 @AllArgsConstructor
 public class ProductPhotoService implements PhotoService {
     private final ProductService productService;
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
+
+    private static final String PRODUCTS_SUBDIRECTORY_NAME = "products";
 
     @Override
     public PhotoDto getPhoto(Long id) {
