@@ -2,6 +2,7 @@ package com.github.jbence1994.erp.identity.service;
 
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.repository.ProfileRepository;
+import com.github.jbence1994.erp.identity.util.PasswordManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.when;
 
 class ProfileServiceTests {
     private final ProfileRepository profileRepository = mock(ProfileRepository.class);
-    private final ProfileService profileService = new ProfileService(profileRepository);
+    private final PasswordManager passwordManager = mock(PasswordManager.class);
+    private final ProfileService profileService = new ProfileService(profileRepository, passwordManager);
 
     @Test
     public void getProfileTest_HappyPath() {
