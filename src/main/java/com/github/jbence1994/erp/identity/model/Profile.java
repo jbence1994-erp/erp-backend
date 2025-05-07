@@ -30,7 +30,7 @@ public class Profile {
 
     private Boolean isDeleted;
 
-    @OneToOne(mappedBy = "profile")
+    @OneToOne
     private User user;
 
     public Boolean hasPhoto() {
