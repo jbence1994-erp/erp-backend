@@ -12,10 +12,10 @@ import java.io.IOException;
 public class MultipartFileToCreateProfilePhotoDtoMapper implements MultipartFileToCreatePhotoDtoMapper<CreateProfilePhotoDto> {
 
     @Override
-    public CreateProfilePhotoDto toDto(Long id, MultipartFile file) {
+    public CreateProfilePhotoDto toDto(Long profileId, MultipartFile file) {
         try {
             return new CreateProfilePhotoDto(
-                    id,
+                    profileId,
                     file.isEmpty(),
                     file.getOriginalFilename(),
                     file.getSize(),
@@ -23,7 +23,7 @@ public class MultipartFileToCreateProfilePhotoDtoMapper implements MultipartFile
                     file.getBytes()
             );
         } catch (IOException exception) {
-            throw new ProfilePhotoUploadException(id);
+            throw new ProfilePhotoUploadException(profileId);
         }
     }
 }
