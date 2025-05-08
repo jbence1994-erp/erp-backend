@@ -2,6 +2,9 @@ package com.github.jbence1994.erp.inventory.mapper;
 
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
@@ -12,8 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
+@ExtendWith(MockitoExtension.class)
 class MultipartFileToCreateProductPhotoDtoMapperTests {
-    private final MultipartFileToCreateProductPhotoDtoMapper toProductPhotoDtoMapper = new MultipartFileToCreateProductPhotoDtoMapper();
+
+    @InjectMocks
+    private MultipartFileToCreateProductPhotoDtoMapper toProductPhotoDtoMapper;
 
     @Test
     public void toDtoTest_HappyPath() throws IOException {

@@ -6,9 +6,13 @@ import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.stream.Stream;
 
@@ -18,26 +22,32 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_JPG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_NAME_PNG;
-import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.INVALID_FILE_NAME;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PNG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TXT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-class FileValidatorTests {
-    private final FileExtensionsConfig fileExtensionsConfig = mock();
-    private final FileValidator fileValidator = new FileValidator(fileExtensionsConfig);
-    private final CreatePhotoDto createPhotoDto = mock(CreatePhotoDto.class);
+@ExtendWith(MockitoExtension.class)
+class FileValidatorImplTests {
+
+    @Mock
+    private FileExtensionsConfig fileExtensionsConfig;
+
+    @InjectMocks
+    private FileValidatorImpl fileValidator;
+
+    @Mock
+    private CreatePhotoDto createPhotoDto;
 
     @BeforeEach
     public void setup() {
         when(createPhotoDto.isEmpty()).thenReturn(false);
 
-        when(fileExtensionsConfig.getAllowedFileExtensions()).thenReturn(ALLOWED_FILE_EXTENSIONS);
+        lenient().when(fileExtensionsConfig.getAllowedFileExtensions()).thenReturn(ALLOWED_FILE_EXTENSIONS);
     }
 
     private static Stream<Arguments> fileNameAndExtensionParams() {
@@ -56,7 +66,6 @@ class FileValidatorTests {
             String fileName,
             String extension
     ) {
-        when(createPhotoDto.getOriginalFilename()).thenReturn(fileName);
         when(createPhotoDto.getFileExtension()).thenReturn(extension);
 
         assertDoesNotThrow(() -> fileValidator.validate(createPhotoDto));
@@ -79,7 +88,6 @@ class FileValidatorTests {
 
     @Test
     public void validateTest_UnhappyPath_FileHasNotAllowedExtension() {
-        when(createPhotoDto.getOriginalFilename()).thenReturn(INVALID_FILE_NAME);
         when(createPhotoDto.getFileExtension()).thenReturn(TXT);
 
         assertThrows(
