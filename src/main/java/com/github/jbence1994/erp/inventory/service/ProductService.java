@@ -1,26 +1,11 @@
 package com.github.jbence1994.erp.inventory.service;
 
-import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.model.Product;
-import com.github.jbence1994.erp.inventory.repository.ProductRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
-@AllArgsConstructor
-public class ProductService {
-    private final ProductRepository productRepository;
+public interface ProductService {
+    Product getProduct(Long id);
 
-    public Product getProduct(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
-    }
+    Product createProduct(Product product);
 
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
-    }
-
-    public void updateProduct(Product product) {
-        productRepository.save(product);
-    }
+    void updateProduct(Product product);
 }

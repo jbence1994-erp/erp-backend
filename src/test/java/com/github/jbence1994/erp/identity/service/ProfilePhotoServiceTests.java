@@ -8,6 +8,10 @@ import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundExceptio
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
@@ -23,25 +27,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ProfilePhotoServiceTests {
-    private final ProfileService profileService = mock(ProfileService.class);
-    private final FileUtils fileUtils = mock(FileUtils.class);
-    private final FileValidator fileValidator = mock(FileValidator.class);
-    private final ProfilePhotoService profilePhotoService = new ProfilePhotoService(
-            profileService,
-            fileUtils,
-            fileValidator
-    );
-    private final CreateProfilePhotoDto createProfilePhotoDto = mock(CreateProfilePhotoDto.class);
+
+    @Mock
+    private ProfileService profileService;
+
+    @Mock
+    private FileUtils fileUtils;
+
+    @Mock
+    private FileValidator fileValidator;
+
+    @InjectMocks
+    private ProfilePhotoService profilePhotoService;
+
+    @Mock
+    private CreateProfilePhotoDto createProfilePhotoDto;
 
     @BeforeEach
     public void setup() {
         when(profileService.getProfile(any())).thenReturn(profile1WithPhoto());
-
-        doNothing().when(fileValidator).validate(any());
     }
 
     @Test

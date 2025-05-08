@@ -5,6 +5,10 @@ import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.repository.ProfileRepository;
 import com.github.jbence1994.erp.identity.util.PasswordManager;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -15,15 +19,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class ProfileServiceTests {
-    private final ProfileRepository profileRepository = mock(ProfileRepository.class);
-    private final PasswordManager passwordManager = mock(PasswordManager.class);
-    private final ProfileService profileService = new ProfileService(profileRepository, passwordManager);
+@ExtendWith(MockitoExtension.class)
+class ProfileServiceImplTests {
+
+    @Mock
+    private ProfileRepository profileRepository;
+
+    @Mock
+    private PasswordManager passwordManager;
+
+    @InjectMocks
+    private ProfileServiceImpl profileService;
 
     @Test
     public void getProfileTest_HappyPath() {
@@ -68,7 +78,6 @@ class ProfileServiceTests {
     @Test
     public void createProfileTest_UnhappyPath_ProfileAlreadyBeenCreatedForGivenUser() {
         when(profileRepository.findByUserId(any())).thenReturn(Optional.of(profile1()));
-        when(profileRepository.save(any())).thenReturn(profile1());
 
         assertThrows(
                 ProfileAlreadyExistException.class,

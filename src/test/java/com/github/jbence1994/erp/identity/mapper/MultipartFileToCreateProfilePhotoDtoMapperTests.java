@@ -2,6 +2,9 @@ package com.github.jbence1994.erp.identity.mapper;
 
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
@@ -12,8 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
+@ExtendWith(MockitoExtension.class)
 class MultipartFileToCreateProfilePhotoDtoMapperTests {
-    private final MultipartFileToCreateProfilePhotoDtoMapper toProfilePhotoDtoMapper = new MultipartFileToCreateProfilePhotoDtoMapper();
+
+    @InjectMocks
+    private MultipartFileToCreateProfilePhotoDtoMapper toProfilePhotoDtoMapper;
 
     @Test
     public void toDtoTest_HappyPath() throws IOException {
