@@ -1,6 +1,10 @@
 package com.github.jbence1994.erp.identity.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_PASSWORD;
@@ -9,12 +13,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class PasswordManagerTests {
-    private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-    private final PasswordManager passwordManager = new PasswordManager(passwordEncoder);
+@ExtendWith(MockitoExtension.class)
+class PasswordManagerImplTests {
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @InjectMocks
+    private PasswordManagerImpl passwordManager;
 
     @Test
     public void encodeTest() {

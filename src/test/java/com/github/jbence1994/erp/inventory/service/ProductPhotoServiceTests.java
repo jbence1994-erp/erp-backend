@@ -8,6 +8,10 @@ import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundExcepti
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
@@ -23,25 +27,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ProductPhotoServiceTests {
-    private final ProductService productService = mock(ProductService.class);
-    private final FileUtils fileUtils = mock(FileUtils.class);
-    private final FileValidator fileValidator = mock(FileValidator.class);
-    private final ProductPhotoService productPhotoService = new ProductPhotoService(
-            productService,
-            fileUtils,
-            fileValidator
-    );
-    private final CreateProductPhotoDto createProductPhotoDto = mock(CreateProductPhotoDto.class);
+
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private FileUtils fileUtils;
+
+    @Mock
+    private FileValidator fileValidator;
+
+    @InjectMocks
+    private ProductPhotoService productPhotoService;
+
+    @Mock
+    private CreateProductPhotoDto createProductPhotoDto;
 
     @BeforeEach
     public void setup() {
         when(productService.getProduct(any())).thenReturn(product1WithPhoto());
-
-        doNothing().when(fileValidator).validate(any());
     }
 
     @Test
