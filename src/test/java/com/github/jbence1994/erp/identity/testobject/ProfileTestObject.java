@@ -5,6 +5,7 @@ import com.github.jbence1994.erp.identity.model.Profile;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
 import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_PASSWORD;
 import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_USERNAME;
+import static com.github.jbence1994.erp.identity.testobject.UserTestObject.user1;
 
 public final class ProfileTestObject {
     public static Profile profile1() {
@@ -14,7 +15,7 @@ public final class ProfileTestObject {
                 PROFILE_1_HASHED_PASSWORD,
                 null,
                 false,
-                null // FIXME
+                user1()
         );
     }
 
@@ -25,7 +26,7 @@ public final class ProfileTestObject {
                 PROFILE_1_HASHED_PASSWORD,
                 PHOTO_FILE_NAME,
                 false,
-                null // FIXME
+                user1()
         );
     }
 }
