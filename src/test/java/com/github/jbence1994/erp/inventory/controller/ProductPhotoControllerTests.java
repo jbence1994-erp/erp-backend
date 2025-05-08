@@ -3,11 +3,12 @@ package com.github.jbence1994.erp.inventory.controller;
 import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
+import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
+import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import com.github.jbence1994.erp.inventory.mapper.MultipartFileToCreateProductPhotoDtoMapper;
 import com.github.jbence1994.erp.inventory.service.ProductPhotoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +44,7 @@ class ProductPhotoControllerTests {
     private ProductPhotoService productPhotoService;
 
     @Mock
-    private MultipartFileToCreateProductPhotoDtoMapper toCreateProductPhotoDtoMapper;
+    private MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper;
 
     @InjectMocks
     private ProductPhotoController productPhotoController;
