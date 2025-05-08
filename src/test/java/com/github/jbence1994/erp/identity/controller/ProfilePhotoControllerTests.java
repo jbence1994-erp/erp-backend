@@ -9,11 +9,14 @@ import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundExceptio
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import com.github.jbence1994.erp.identity.mapper.MultipartFileToCreateProfilePhotoDtoMapper;
 import com.github.jbence1994.erp.identity.service.ProfilePhotoService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,24 +29,24 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TXT;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.emptyMultipartFile;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.multipartFile;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.multipartFileWithInvalidFileExtension;
-import static com.github.jbence1994.erp.identity.testobject.CreateProfilePhotoDtoTestObject.createProfilePhotoDto;
 import static com.github.jbence1994.erp.identity.testobject.ProfilePhotoDtoTestObject.profilePhotoDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ProfilePhotoControllerTests {
-    private final ProfilePhotoService profilePhotoService = mock(ProfilePhotoService.class);
-    private final MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper = mock(MultipartFileToCreateProfilePhotoDtoMapper.class);
-    private final ProfilePhotoController profilePhotoController = new ProfilePhotoController(profilePhotoService, toCreateProfilePhotoDtoMapper);
 
-    @BeforeEach
-    public void setup() {
-        when(toCreateProfilePhotoDtoMapper.toDto(any(), any())).thenReturn(createProfilePhotoDto());
-    }
+    @Mock
+    private ProfilePhotoService profilePhotoService;
+
+    @Mock
+    private MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper;
+
+    @InjectMocks
+    private ProfilePhotoController profilePhotoController;
 
     @Test
     public void getProfilePhotoTest_HappyPath() {

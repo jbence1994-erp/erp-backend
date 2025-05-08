@@ -9,11 +9,14 @@ import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundExcepti
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import com.github.jbence1994.erp.inventory.mapper.MultipartFileToCreateProductPhotoDtoMapper;
 import com.github.jbence1994.erp.inventory.service.ProductPhotoService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,24 +29,24 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TXT;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.emptyMultipartFile;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.multipartFile;
 import static com.github.jbence1994.erp.common.testobject.MultipartFileTestObject.multipartFileWithInvalidFileExtension;
-import static com.github.jbence1994.erp.inventory.testobject.CreateProductPhotoDtoTestObject.createProductPhotoDto;
 import static com.github.jbence1994.erp.inventory.testobject.ProductPhotoDtoTestObject.productPhotoDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ProductPhotoControllerTests {
-    private final ProductPhotoService productPhotoService = mock(ProductPhotoService.class);
-    private final MultipartFileToCreateProductPhotoDtoMapper toCreateProductPhotoDtoMapper = mock(MultipartFileToCreateProductPhotoDtoMapper.class);
-    private final ProductPhotoController productPhotoController = new ProductPhotoController(productPhotoService, toCreateProductPhotoDtoMapper);
 
-    @BeforeEach
-    public void setup() {
-        when(toCreateProductPhotoDtoMapper.toDto(any(), any())).thenReturn(createProductPhotoDto());
-    }
+    @Mock
+    private ProductPhotoService productPhotoService;
+
+    @Mock
+    private MultipartFileToCreateProductPhotoDtoMapper toCreateProductPhotoDtoMapper;
+
+    @InjectMocks
+    private ProductPhotoController productPhotoController;
 
     @Test
     public void getProductPhotoTest_HappyPath() {
