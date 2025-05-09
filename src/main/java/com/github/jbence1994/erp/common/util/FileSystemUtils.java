@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -15,29 +16,18 @@ public class FileSystemUtils implements FileUtils {
 
     @Override
     public byte[] readAllBytes(String customSubdirectoryName, String fileName) throws IOException {
-        var uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory = Paths.get(
-                UPLOADS_DIRECTORY_NAME,
-                PHOTOS_SUBDIRECTORY_NAME,
-                customSubdirectoryName,
-                fileName
-        );
-
-        return Files.readAllBytes(uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory);
+        var filePath = resolvePath(String.format("%s/%s", customSubdirectoryName, fileName));
+        return Files.readAllBytes(filePath);
     }
 
     @Override
     public String createPhotoUploadsDirectoryStructure(String customSubdirectoryName) throws IOException {
-        var uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory = Paths.get(
-                UPLOADS_DIRECTORY_NAME,
-                PHOTOS_SUBDIRECTORY_NAME,
-                customSubdirectoryName
-        );
-
-        if (!Files.exists(uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory)) {
-            Files.createDirectories(uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory);
+        var directoryPath = resolvePath(customSubdirectoryName);
+        if (!Files.exists(directoryPath)) {
+            Files.createDirectories(directoryPath);
         }
 
-        return uploadsDirectoryWithPhotosSubdirectoryAndCustomSubdirectory.toString();
+        return directoryPath.toString();
     }
 
     @Override
@@ -48,5 +38,9 @@ public class FileSystemUtils implements FileUtils {
         Files.copy(photo.getInputStream(), pathWithFileName);
 
         return fileName;
+    }
+
+    private Path resolvePath(String path) {
+        return Paths.get(String.format("%s/%s/%s", UPLOADS_DIRECTORY_NAME, PHOTOS_SUBDIRECTORY_NAME, path));
     }
 }
