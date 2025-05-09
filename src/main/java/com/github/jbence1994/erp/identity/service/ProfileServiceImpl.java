@@ -17,6 +17,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile getProfile(Long id) {
         return profileRepository.findById(id)
+                .filter(profile -> !profile.isDeleted())
                 .orElseThrow(() -> new ProfileNotFoundException(id));
     }
 
@@ -45,10 +46,6 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void deleteProfile(Long id) {
         var profileToDelete = getProfile(id);
-
-        if (profileToDelete.isDeleted()) {
-            throw new ProfileNotFoundException(id);
-        }
 
         profileToDelete.setDeleted(true);
 

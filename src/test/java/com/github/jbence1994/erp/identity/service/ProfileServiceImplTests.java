@@ -48,13 +48,25 @@ class ProfileServiceImplTests {
     }
 
     @Test
-    public void getProfileTest_UnhappyPath() {
+    public void getProfileTest_UnhappyPath_ProfileNotFoundByGivenId() {
         when(profileRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(
                 ProfileNotFoundException.class,
-                () -> profileService.getProfile(3L)
+                () -> profileService.getProfile(5L)
         );
+    }
+
+    @Test
+    public void getProfileTest_UnhappyPath_ProfileIsAlreadyHasBeenDeleted() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
+
+        assertThrows(
+                ProfileNotFoundException.class,
+                () -> profileService.deleteProfile(1L)
+        );
+
+        verify(profileRepository, never()).save(any());
     }
 
     @Test
