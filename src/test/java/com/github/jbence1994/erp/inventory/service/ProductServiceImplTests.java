@@ -8,11 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1;
+import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product2;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,6 +31,16 @@ class ProductServiceImplTests {
 
     @InjectMocks
     private ProductServiceImpl productService;
+
+    @Test
+    public void getProductsTest() {
+        when(productRepository.findAll()).thenReturn(List.of(product1(), product2()));
+
+        var result = productService.getProducts();
+
+        assertFalse(result.isEmpty());
+        assertEquals(2, result.size());
+    }
 
     @Test
     public void getProductTest_HappyPath() {
