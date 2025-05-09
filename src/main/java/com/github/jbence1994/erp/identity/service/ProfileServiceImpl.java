@@ -1,5 +1,7 @@
 package com.github.jbence1994.erp.identity.service;
 
+import com.github.jbence1994.erp.identity.dto.CurrentAndNewPassword;
+import com.github.jbence1994.erp.identity.exception.CurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.model.Profile;
@@ -41,6 +43,22 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void updateProfile(Profile profile) {
         profileRepository.save(profile);
+    }
+
+    @Override
+    public void updateProfilePassword(Long id, CurrentAndNewPassword currentAndNewPassword) {
+        var profileToUpdate = getProfile(id);
+
+        var currentPassword = currentAndNewPassword.currentPassword();
+        var newPassword = currentAndNewPassword.newPassword();
+
+        if (!passwordManager.verify(currentPassword, profileToUpdate.getPassword())) {
+            throw new CurrentPasswordAndPasswordNotMatchingException();
+        }
+
+        profileToUpdate.setPassword(passwordManager.encode(newPassword));
+
+        profileRepository.save(profileToUpdate);
     }
 
     @Override
