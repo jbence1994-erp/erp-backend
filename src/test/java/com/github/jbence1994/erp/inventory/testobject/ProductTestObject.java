@@ -9,6 +9,7 @@ import static com.github.jbence1994.erp.inventory.constant.ProductTestConstants.
 import static com.github.jbence1994.erp.inventory.constant.ProductTestConstants.PRODUCT_1_SERIAL_DESCRIPTION;
 import static com.github.jbence1994.erp.inventory.constant.ProductTestConstants.PRODUCT_1_SERIAL_NUMBER;
 import static com.github.jbence1994.erp.inventory.constant.ProductTestConstants.PRODUCT_1_UNIT;
+import static com.github.jbence1994.erp.inventory.testobject.SupplierTestObject.supplier1;
 
 public final class ProductTestObject {
     public static Product product1() {
@@ -19,7 +20,7 @@ public final class ProductTestObject {
                 BigDecimal.valueOf(10000.00),
                 PRODUCT_1_UNIT,
                 PRODUCT_1_SERIAL_DESCRIPTION,
-                null, // FIXME
+                supplier1(),
                 10,
                 null
         );
@@ -33,7 +34,7 @@ public final class ProductTestObject {
                 BigDecimal.valueOf(10000.00),
                 PRODUCT_1_UNIT,
                 PRODUCT_1_SERIAL_DESCRIPTION,
-                null, // FIXME
+                supplier1(),
                 10,
                 PHOTO_FILE_NAME
         );

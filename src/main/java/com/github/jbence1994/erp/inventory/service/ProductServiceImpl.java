@@ -17,6 +17,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
+    }
+
     @Override
     public void updateProduct(Product product) {
         productRepository.save(product);

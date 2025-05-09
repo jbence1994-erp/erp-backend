@@ -50,6 +50,15 @@ class ProductServiceImplTests {
     }
 
     @Test
+    public void createProductTest_HappyPath() {
+        when(productRepository.save(any())).thenReturn(product1());
+
+        var result = productService.createProduct(product1());
+
+        assertEquals(product1(), result);
+    }
+
+    @Test
     public void updateProductTest_HappyPath() {
         when(productRepository.save(any())).thenReturn(product1());
 
