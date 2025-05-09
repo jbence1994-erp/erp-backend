@@ -3,12 +3,13 @@ package com.github.jbence1994.erp.identity.controller;
 import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
+import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
 import com.github.jbence1994.erp.common.service.PhotoService;
+import com.github.jbence1994.erp.identity.dto.CreateProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
-import com.github.jbence1994.erp.identity.mapper.MultipartFileToCreateProfilePhotoDtoMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,14 +29,14 @@ import org.springframework.web.multipart.MultipartFile;
 @CrossOrigin
 public class ProfilePhotoController {
     private final PhotoService photoService;
-    private final MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper;
+    private final MultipartFileToCreatePhotoDtoMapper<CreateProfilePhotoDto> toCreatePhotoDtoMapper;
 
     public ProfilePhotoController(
             @Qualifier("profilePhotoService") PhotoService photoService,
-            MultipartFileToCreateProfilePhotoDtoMapper toCreateProfilePhotoDtoMapper
+            MultipartFileToCreatePhotoDtoMapper<CreateProfilePhotoDto> toCreatePhotoDtoMapper
     ) {
         this.photoService = photoService;
-        this.toCreateProfilePhotoDtoMapper = toCreateProfilePhotoDtoMapper;
+        this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
     }
 
     @GetMapping
@@ -63,7 +64,7 @@ public class ProfilePhotoController {
             @RequestParam("file") MultipartFile file
     ) {
         try {
-            var profilePhotoDto = toCreateProfilePhotoDtoMapper.toDto(profileId, file);
+            var profilePhotoDto = toCreatePhotoDtoMapper.toDto(profileId, file);
 
             var profilePhotoFileName = photoService.uploadPhoto(profilePhotoDto);
 
