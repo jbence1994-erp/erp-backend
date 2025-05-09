@@ -1,5 +1,7 @@
 package com.github.jbence1994.erp.identity.service;
 
+import com.github.jbence1994.erp.identity.dto.CurrentAndNewPassword;
+import com.github.jbence1994.erp.identity.exception.CurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.repository.ProfileRepository;
@@ -12,7 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_NEW_PASSWORD;
 import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_PASSWORD;
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_INVALID_PASSWORD;
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_NEW_PASSWORD;
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_PASSWORD;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1IsDeleted;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -58,7 +64,7 @@ class ProfileServiceImplTests {
     }
 
     @Test
-    public void getProfileTest_UnhappyPath_ProfileIsAlreadyHasBeenDeleted() {
+    public void getProfileTest_UnhappyPath_ProfileNotFound() {
         when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
 
         assertThrows(
@@ -109,6 +115,53 @@ class ProfileServiceImplTests {
     }
 
     @Test
+    public void updateProfilePasswordTest_HappyPath() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
+        when(passwordManager.verify(any(), any())).thenReturn(true);
+        when(passwordManager.encode(any())).thenReturn(PROFILE_1_HASHED_NEW_PASSWORD);
+
+        assertDoesNotThrow(
+                () -> profileService.updateProfilePassword(
+                        1L,
+                        new CurrentAndNewPassword(PROFILE_1_PASSWORD, PROFILE_1_NEW_PASSWORD)
+                )
+        );
+
+        verify(profileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void updateProfilePasswordTest_UnhappyPath_CurrentPasswordNotMatchingWithPassword() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
+        when(passwordManager.verify(any(), any())).thenReturn(false);
+
+        assertThrows(
+                CurrentPasswordAndPasswordNotMatchingException.class,
+                () -> profileService.updateProfilePassword(
+                        1L,
+                        new CurrentAndNewPassword(PROFILE_1_INVALID_PASSWORD, PROFILE_1_NEW_PASSWORD)
+                )
+        );
+
+        verify(profileRepository, never()).save(any());
+    }
+
+    @Test
+    public void updateProfilePasswordTest_UnhappyPath_ProfileNotFound() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
+
+        assertThrows(
+                ProfileNotFoundException.class,
+                () -> profileService.updateProfilePassword(
+                        1L,
+                        new CurrentAndNewPassword(PROFILE_1_PASSWORD, PROFILE_1_NEW_PASSWORD)
+                )
+        );
+
+        verify(profileRepository, never()).save(any());
+    }
+
+    @Test
     public void deleteProfileTest_HappyPath() {
         when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
         when(profileRepository.save(any())).thenReturn(profile1IsDeleted());
@@ -119,7 +172,7 @@ class ProfileServiceImplTests {
     }
 
     @Test
-    public void deleteProfileTest_UnhappyPath_ProfileAlreadyHasBeenDeleted() {
+    public void deleteProfileTest_UnhappyPath_ProfileAlreadyBeenDeleted() {
         when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
 
         assertThrows(
