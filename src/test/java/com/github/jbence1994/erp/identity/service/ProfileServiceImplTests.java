@@ -1,5 +1,7 @@
 package com.github.jbence1994.erp.identity.service;
 
+import com.github.jbence1994.erp.identity.dto.CurrentAndNewPassword;
+import com.github.jbence1994.erp.identity.exception.CurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.ProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
 import com.github.jbence1994.erp.identity.repository.ProfileRepository;
@@ -12,13 +14,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_NEW_PASSWORD;
 import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_PASSWORD;
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_INVALID_PASSWORD;
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_NEW_PASSWORD;
+import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_PASSWORD;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1;
+import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1IsDeleted;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,13 +54,25 @@ class ProfileServiceImplTests {
     }
 
     @Test
-    public void getProfileTest_UnhappyPath() {
+    public void getProfileTest_UnhappyPath_ProfileNotFoundByGivenId() {
         when(profileRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(
                 ProfileNotFoundException.class,
-                () -> profileService.getProfile(3L)
+                () -> profileService.getProfile(5L)
         );
+    }
+
+    @Test
+    public void getProfileTest_UnhappyPath_ProfileNotFound() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
+
+        assertThrows(
+                ProfileNotFoundException.class,
+                () -> profileService.deleteProfile(1L)
+        );
+
+        verify(profileRepository, never()).save(any());
     }
 
     @Test
@@ -92,5 +112,74 @@ class ProfileServiceImplTests {
         profileService.updateProfile(profile1());
 
         verify(profileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void updateProfilePasswordTest_HappyPath() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
+        when(passwordManager.verify(any(), any())).thenReturn(true);
+        when(passwordManager.encode(any())).thenReturn(PROFILE_1_HASHED_NEW_PASSWORD);
+
+        assertDoesNotThrow(
+                () -> profileService.updateProfilePassword(
+                        1L,
+                        new CurrentAndNewPassword(PROFILE_1_PASSWORD, PROFILE_1_NEW_PASSWORD)
+                )
+        );
+
+        verify(profileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void updateProfilePasswordTest_UnhappyPath_CurrentPasswordNotMatchingWithPassword() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
+        when(passwordManager.verify(any(), any())).thenReturn(false);
+
+        assertThrows(
+                CurrentPasswordAndPasswordNotMatchingException.class,
+                () -> profileService.updateProfilePassword(
+                        1L,
+                        new CurrentAndNewPassword(PROFILE_1_INVALID_PASSWORD, PROFILE_1_NEW_PASSWORD)
+                )
+        );
+
+        verify(profileRepository, never()).save(any());
+    }
+
+    @Test
+    public void updateProfilePasswordTest_UnhappyPath_ProfileNotFound() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
+
+        assertThrows(
+                ProfileNotFoundException.class,
+                () -> profileService.updateProfilePassword(
+                        1L,
+                        new CurrentAndNewPassword(PROFILE_1_PASSWORD, PROFILE_1_NEW_PASSWORD)
+                )
+        );
+
+        verify(profileRepository, never()).save(any());
+    }
+
+    @Test
+    public void deleteProfileTest_HappyPath() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
+        when(profileRepository.save(any())).thenReturn(profile1IsDeleted());
+
+        assertDoesNotThrow(() -> profileService.deleteProfile(1L));
+
+        verify(profileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void deleteProfileTest_UnhappyPath_ProfileAlreadyBeenDeleted() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
+
+        assertThrows(
+                ProfileNotFoundException.class,
+                () -> profileService.deleteProfile(1L)
+        );
+
+        verify(profileRepository, never()).save(any());
     }
 }
