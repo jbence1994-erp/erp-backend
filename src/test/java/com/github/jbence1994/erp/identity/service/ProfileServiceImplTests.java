@@ -85,14 +85,13 @@ class ProfileServiceImplTests {
 
         assertNotNull(result);
         assertEquals(profile1().getId(), result.getId());
-        assertEquals(profile1().getUsername(), result.getUsername());
+        assertEquals(profile1().getEmail(), result.getEmail());
         assertEquals(profile1().getPassword(), result.getPassword());
         assertEquals(profile1().getPhotoFileName(), result.getPhotoFileName());
         assertEquals(profile1().isDeleted(), result.isDeleted());
         assertEquals(profile1().getUser().getId(), result.getUser().getId());
         assertEquals(profile1().getUser().getFirstName(), result.getUser().getFirstName());
         assertEquals(profile1().getUser().getLastName(), result.getUser().getLastName());
-        assertEquals(profile1().getUser().getEmail(), result.getUser().getEmail());
     }
 
     @Test
