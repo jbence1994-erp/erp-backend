@@ -41,4 +41,17 @@ public class ProfileServiceImpl implements ProfileService {
     public void updateProfile(Profile profile) {
         profileRepository.save(profile);
     }
+
+    @Override
+    public void deleteProfile(Long id) {
+        var profileToDelete = getProfile(id);
+
+        if (profileToDelete.isDeleted()) {
+            throw new ProfileNotFoundException(id);
+        }
+
+        profileToDelete.setDeleted(true);
+
+        profileRepository.save(profileToDelete);
+    }
 }
