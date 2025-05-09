@@ -7,7 +7,7 @@ public interface ProfileService {
 
     Profile createProfile(Profile profile);
 
-    void updateProfile(Profile profile);
+    void updateProfilePassword(Profile profile);
 
     void deleteProfile(Long id);
 }
