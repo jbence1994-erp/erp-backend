@@ -29,4 +29,15 @@ public final class ProfileTestObject {
                 user1()
         );
     }
+
+    public static Profile profile1IsDeleted() {
+        return new Profile(
+                1L,
+                PROFILE_1_USERNAME,
+                PROFILE_1_HASHED_PASSWORD,
+                null,
+                true,
+                user1()
+        );
+    }
 }

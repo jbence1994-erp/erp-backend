@@ -14,11 +14,13 @@ import java.util.Optional;
 
 import static com.github.jbence1994.erp.identity.constant.ProfileTestConstants.PROFILE_1_HASHED_PASSWORD;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1;
+import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1IsDeleted;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,5 +94,27 @@ class ProfileServiceImplTests {
         profileService.updateProfile(profile1());
 
         verify(profileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void deleteProfileTest_HappyPath() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1()));
+        when(profileRepository.save(any())).thenReturn(profile1IsDeleted());
+
+        assertDoesNotThrow(() -> profileService.deleteProfile(1L));
+
+        verify(profileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void deleteProfileTest_UnhappyPath_ProfileAlreadyHasBeenDeleted() {
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile1IsDeleted()));
+
+        assertThrows(
+                ProfileNotFoundException.class,
+                () -> profileService.deleteProfile(1L)
+        );
+
+        verify(profileRepository, never()).save(any());
     }
 }
