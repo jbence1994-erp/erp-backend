@@ -48,7 +48,7 @@ class ProfileServiceImplTests {
     }
 
     @Test
-    public void getProfileTest_UnhappyPath_ProfileNotFoundForGivenId() {
+    public void getProfileTest_UnhappyPath_ProfileNotFoundByGivenId() {
         when(profileRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(
