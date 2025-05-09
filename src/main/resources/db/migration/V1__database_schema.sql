@@ -33,14 +33,13 @@ CREATE TABLE IF NOT EXISTS users
 (
     id         BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
-    last_name  VARCHAR(255) NOT NULL,
-    email      VARCHAR(75)  NOT NULL
+    last_name  VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS profiles
 (
     id              BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    username        VARCHAR(15)  NOT NULL,
+    email           VARCHAR(75)  NOT NULL,
     password        VARCHAR(255) NOT NULL,
     photo_file_name VARCHAR(41),
     is_deleted      TINYINT      NOT NULL DEFAULT 0,
