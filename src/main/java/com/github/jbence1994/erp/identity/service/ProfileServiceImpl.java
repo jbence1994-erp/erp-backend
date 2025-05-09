@@ -16,14 +16,9 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Profile getProfile(Long id) {
-        var profile = profileRepository.findById(id)
+        return profileRepository.findById(id)
+                .filter(profile -> !profile.isDeleted())
                 .orElseThrow(() -> new ProfileNotFoundException(id));
-
-        if (profile.isDeleted()) {
-            throw new ProfileNotFoundException(id);
-        }
-
-        return profile;
     }
 
     @Override
