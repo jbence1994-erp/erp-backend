@@ -17,18 +17,18 @@ VALUES ('Wireless Mouse', 'WM-1001', 15.50, 'pcs', 'Ergonomic wireless mouse wit
        ('HD Webcam', 'WC-9009', 49.99, 'pcs', '1080p USB webcam with built-in mic.', 5, 65, NULL),
        ('Portable Speaker', 'PS-1010', 34.99, 'pcs', 'Bluetooth speaker with 10 h battery life.', 5, 90, NULL);
 
-INSERT INTO users (first_name, last_name, email)
-VALUES ('Alice', 'Smith', 'alice.smith@example.com'),
-       ('Bob', 'Johnson', 'bob.johnson@example.com'),
-       ('Charlie', 'Williams', 'charlie.williams@example.com'),
-       ('Diana', 'Brown', 'diana.brown@example.com');
+INSERT INTO users (first_name, last_name)
+VALUES ('Alice', 'Smith'),
+       ('Bob', 'Johnson'),
+       ('Charlie', 'Williams'),
+       ('Diana', 'Brown');
 
-INSERT INTO profiles (username, password, photo_file_name, is_deleted, user_id)
-VALUES ('alice123', '$2a$10$g1jri8EeEoYAZKze9yWdkuM06KzWxmEfqg0a5cA7I5jfew8ljHjhC', NULL, 0,
-        (SELECT id FROM users WHERE email = 'alice.smith@example.com')),
-       ('bobbyJ', '$2a$10$opMsK7wLet5T4Fj4/5Xe7uWAISjOCwTOPANVGToeyhdUgVSmKS4g.', NULL, 0,
-        (SELECT id FROM users WHERE email = 'bob.johnson@example.com')),
-       ('charlieW', '$2a$10$iiZeeCMgp.r9i.OBCNcimOZpUONG8wZZ2VoY0vt2rwhVnngiYHhK6', NULL, 0,
-        (SELECT id FROM users WHERE email = 'charlie.williams@example.com')),
-       ('dianaB', '$2a$10$yNPCJfAa1Tso/vryjAWT/ex1Kkil4jZm4cAOcwStZyARA5Gy2Kpjm', NULL, 1,
-        (SELECT id FROM users WHERE email = 'diana.brown@example.com'));
+INSERT INTO profiles (email, password, photo_file_name, is_deleted, user_id)
+VALUES ('alice.smith@example.com', '$2a$10$g1jri8EeEoYAZKze9yWdkuM06KzWxmEfqg0a5cA7I5jfew8ljHjhC', NULL, 0,
+        (SELECT id FROM users WHERE first_name = 'Alice' AND last_name = 'Smith')),
+       ('bob.johnson@example.com', '$2a$10$opMsK7wLet5T4Fj4/5Xe7uWAISjOCwTOPANVGToeyhdUgVSmKS4g.', NULL, 0,
+        (SELECT id FROM users WHERE first_name = 'Bob' AND last_name = 'Johnson')),
+       ('charlie.williams@example.com', '$2a$10$iiZeeCMgp.r9i.OBCNcimOZpUONG8wZZ2VoY0vt2rwhVnngiYHhK6', NULL, 0,
+        (SELECT id FROM users WHERE first_name = 'Charlie' AND last_name = 'Williams')),
+       ('diana.brown@example.com', '$2a$10$yNPCJfAa1Tso/vryjAWT/ex1Kkil4jZm4cAOcwStZyARA5Gy2Kpjm', NULL, 1,
+        (SELECT id FROM users WHERE first_name = 'Diana' AND last_name = 'Brown'));
