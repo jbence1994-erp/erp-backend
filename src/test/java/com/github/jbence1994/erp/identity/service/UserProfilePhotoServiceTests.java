@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -50,12 +51,12 @@ class UserProfilePhotoServiceTests {
 
     @BeforeEach
     public void setup() {
-        when(userProfileService.getUserProfile(any())).thenReturn(userProfile1WithPhoto());
+        when(userProfileService.getUserProfile(anyLong())).thenReturn(userProfile1WithPhoto());
     }
 
     @Test
     public void uploadPhotoTest_HappyPath() throws IOException {
-        when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
+        when(userProfileService.getUserProfile(anyLong())).thenReturn(userProfile1());
         when(createUserProfilePhotoDto.createFileName()).thenReturn(PHOTO_FILE_NAME);
         doNothing().when(fileUtils).store(any(), any(), any());
         doNothing().when(userProfileService).updateUserProfile(any());
@@ -75,7 +76,7 @@ class UserProfilePhotoServiceTests {
 
     @Test
     public void uploadPhotoTest_UnhappyPath_IOException() throws IOException {
-        when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
+        when(userProfileService.getUserProfile(anyLong())).thenReturn(userProfile1());
         doThrow(new IOException("Disk error")).when(fileUtils).store(any(), any(), any());
 
         assertThrows(
@@ -96,7 +97,7 @@ class UserProfilePhotoServiceTests {
 
     @Test
     public void getPhotoTest_UnhappyPath_UserProfileHasNoPhoto() {
-        when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
+        when(userProfileService.getUserProfile(anyLong())).thenReturn(userProfile1());
 
         assertThrows(
                 UserProfilePhotoNotFoundException.class,
