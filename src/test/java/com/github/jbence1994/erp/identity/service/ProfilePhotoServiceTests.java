@@ -18,7 +18,6 @@ import java.io.IOException;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_SIZE;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
-import static com.github.jbence1994.erp.identity.constant.PhotoTestConstants.UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1;
 import static com.github.jbence1994.erp.identity.testobject.ProfileTestObject.profile1WithPhoto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +54,7 @@ class ProfilePhotoServiceTests {
 
     @Test
     public void getPhotoTest_HappyPath() throws IOException {
-        when(fileUtils.readAllBytes(any(), any())).thenReturn(new byte[FILE_SIZE]);
+        when(fileUtils.read(any(), any())).thenReturn(new byte[FILE_SIZE]);
 
         var result = profilePhotoService.getPhoto(1L);
 
@@ -64,7 +64,7 @@ class ProfilePhotoServiceTests {
 
     @Test
     public void getPhotoTest_UnhappyPath() throws IOException {
-        when(fileUtils.readAllBytes(any(), any())).thenThrow(new IOException());
+        when(fileUtils.read(any(), any())).thenThrow(new IOException());
 
         assertThrows(
                 ProfilePhotoNotFoundException.class,
@@ -75,9 +75,8 @@ class ProfilePhotoServiceTests {
     @Test
     public void uploadPhotoTest_HappyPath() throws IOException {
         when(profileService.getProfile(any())).thenReturn(profile1());
-        when(fileUtils.createPhotoUploadsDirectoryStructure(any()))
-                .thenReturn(UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY);
-        when(fileUtils.storePhoto(any(), any())).thenReturn(PHOTO_FILE_NAME);
+        when(createProfilePhotoDto.createFileName()).thenReturn(PHOTO_FILE_NAME);
+        doNothing().when(fileUtils).store(any(), any(), any());
         doNothing().when(profileService).updateProfile(any());
 
         var result = profilePhotoService.uploadPhoto(createProfilePhotoDto);
@@ -96,7 +95,7 @@ class ProfilePhotoServiceTests {
     @Test
     public void uploadPhotoTest_UnhappyPath_ProfilePhotoUploadFailure() throws IOException {
         when(profileService.getProfile(any())).thenReturn(profile1());
-        when(fileUtils.storePhoto(any(), any())).thenThrow(new IOException("Disk error"));
+        doThrow(new IOException("Disk error")).when(fileUtils).store(any(), any(), any());
 
         assertThrows(
                 ProfilePhotoUploadException.class,

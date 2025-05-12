@@ -18,7 +18,6 @@ import java.io.IOException;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.FILE_SIZE;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
-import static com.github.jbence1994.erp.inventory.constant.PhotoTestConstants.UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY;
 import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1;
 import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1WithPhoto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +54,7 @@ class ProductPhotoServiceTests {
 
     @Test
     public void getPhotoTest_HappyPath() throws IOException {
-        when(fileUtils.readAllBytes(any(), any())).thenReturn(new byte[FILE_SIZE]);
+        when(fileUtils.read(any(), any())).thenReturn(new byte[FILE_SIZE]);
 
         var result = productPhotoService.getPhoto(1L);
 
@@ -64,7 +64,7 @@ class ProductPhotoServiceTests {
 
     @Test
     public void getPhotoTest_UnhappyPath() throws IOException {
-        when(fileUtils.readAllBytes(any(), any())).thenThrow(new IOException());
+        when(fileUtils.read(any(), any())).thenThrow(new IOException());
 
         assertThrows(
                 ProductPhotoNotFoundException.class,
@@ -75,9 +75,8 @@ class ProductPhotoServiceTests {
     @Test
     public void uploadPhotoTest_HappyPath() throws IOException {
         when(productService.getProduct(any())).thenReturn(product1());
-        when(fileUtils.createPhotoUploadsDirectoryStructure(any()))
-                .thenReturn(UPLOADS_DIRECTORY_WITH_PHOTOS_SUBDIRECTORY_AND_CUSTOM_SUBDIRECTORY);
-        when(fileUtils.storePhoto(any(), any())).thenReturn(PHOTO_FILE_NAME);
+        when(createProductPhotoDto.createFileName()).thenReturn(PHOTO_FILE_NAME);
+        doNothing().when(fileUtils).store(any(), any(), any());
         doNothing().when(productService).updateProduct(any());
 
         var result = productPhotoService.uploadPhoto(createProductPhotoDto);
@@ -96,7 +95,7 @@ class ProductPhotoServiceTests {
     @Test
     public void uploadPhotoTest_UnhappyPath_ProductPhotoUploadFailure() throws IOException {
         when(productService.getProduct(any())).thenReturn(product1());
-        when(fileUtils.storePhoto(any(), any())).thenThrow(new IOException("Disk error"));
+        doThrow(new IOException("Disk error")).when(fileUtils).store(any(), any(), any());
 
         assertThrows(
                 ProductPhotoUploadException.class,
