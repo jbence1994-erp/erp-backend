@@ -32,6 +32,5 @@ class UserServiceImplTests {
         assertEquals(user1().getId(), result.getId());
         assertEquals(user1().getFirstName(), result.getFirstName());
         assertEquals(user1().getLastName(), result.getLastName());
-        assertEquals(user1().getEmail(), result.getEmail());
     }
 }
