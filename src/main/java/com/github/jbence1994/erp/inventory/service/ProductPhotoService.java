@@ -8,6 +8,7 @@ import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import lombok.RequiredArgsConstructor;
@@ -59,14 +60,18 @@ public class ProductPhotoService implements PhotoService {
         try {
             var product = productService.getProduct(id);
 
+            if (!product.hasPhoto()) {
+                throw new ProductPhotoNotFoundException(id);
+            }
+
             byte[] photoBytes = fileUtils.read(
                     photoUploadDirectoryPath,
                     product.getPhotoFileName()
             );
 
             return new ProductPhotoDto(id, photoBytes, product.getPhotoFileExtension());
-        } catch (Exception exception) {
-            throw new ProductPhotoNotFoundException(id);
+        } catch (IOException exception) {
+            throw new ProductPhotoDownloadException(id);
         }
     }
 }

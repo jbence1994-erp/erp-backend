@@ -8,6 +8,7 @@ import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,9 @@ public class UserProfilePhotoService implements PhotoService {
         try {
             fileValidator.validate(userProfilePhoto);
 
-            var profile = userProfileService.getUserProfile(userProfilePhoto.getUserProfileId());
+            var userProfile = userProfileService.getUserProfile(userProfilePhoto.getUserProfileId());
 
-            if (profile.hasPhoto()) {
+            if (userProfile.hasPhoto()) {
                 throw new UserProfileAlreadyHasPhotoUploadedException(userProfilePhoto.getUserProfileId());
             }
 
@@ -45,10 +46,10 @@ public class UserProfilePhotoService implements PhotoService {
                     photoName,
                     userProfilePhoto.getInputStream()
             );
-            profile.setPhotoFileName(photoName);
-            userProfileService.updateUserProfile(profile);
+            userProfile.setPhotoFileName(photoName);
+            userProfileService.updateUserProfile(userProfile);
 
-            return profile.getPhotoFileName();
+            return userProfile.getPhotoFileName();
         } catch (IOException exception) {
             throw new UserProfilePhotoUploadException(userProfilePhoto.getUserProfileId());
         }
@@ -57,16 +58,20 @@ public class UserProfilePhotoService implements PhotoService {
     @Override
     public PhotoDto getPhoto(Long id) {
         try {
-            var profile = userProfileService.getUserProfile(id);
+            var userProfile = userProfileService.getUserProfile(id);
+
+            if (!userProfile.hasPhoto()) {
+                throw new UserProfilePhotoNotFoundException(id);
+            }
 
             byte[] photoBytes = fileUtils.read(
                     photoUploadDirectoryPath,
-                    profile.getPhotoFileName()
+                    userProfile.getPhotoFileName()
             );
 
-            return new UserProfilePhotoDto(id, photoBytes, profile.getPhotoFileExtension());
-        } catch (Exception exception) {
-            throw new UserProfilePhotoNotFoundException(id);
+            return new UserProfilePhotoDto(id, photoBytes, userProfile.getPhotoFileExtension());
+        } catch (IOException exception) {
+            throw new UserProfilePhotoDownloadException(id);
         }
     }
 }

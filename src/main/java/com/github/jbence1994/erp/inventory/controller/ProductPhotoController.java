@@ -8,6 +8,7 @@ import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,9 +84,16 @@ public class ProductPhotoController {
                     .status(HttpStatus.OK)
                     .headers(headers)
                     .body(photo.getPhotoBytes());
-        } catch (ProductPhotoNotFoundException exception) {
+        } catch (
+                ProductNotFoundException |
+                ProductPhotoNotFoundException exception
+        ) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
+                    .body(exception.getMessage());
+        } catch (ProductPhotoDownloadException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());
         }
     }
