@@ -24,7 +24,7 @@ public class UserProfilePhotoService implements PhotoService {
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
 
-    @Value("${photo_upload_directory_path.user_profiles}")
+    @Value("${erp.photo-upload-directory-path.user-profiles}")
     private String photoUploadDirectoryPath;
 
     @Override
