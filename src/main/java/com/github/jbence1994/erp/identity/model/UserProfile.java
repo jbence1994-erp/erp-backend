@@ -9,14 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user_profiles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class User {
+public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,4 +25,20 @@ public class User {
     private String firstName;
 
     private String lastName;
+
+    private String email;
+
+    private String password;
+
+    private String photoFileName;
+
+    private boolean isDeleted;
+
+    public boolean hasPhoto() {
+        return photoFileName != null;
+    }
+
+    public String getPhotoFileExtension() {
+        return StringUtils.getFilenameExtension(photoFileName);
+    }
 }

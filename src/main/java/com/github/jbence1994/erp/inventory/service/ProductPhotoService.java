@@ -10,7 +10,6 @@ import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

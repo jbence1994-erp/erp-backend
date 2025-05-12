@@ -11,9 +11,9 @@
       "description": "Directory path where a product photo can be uploaded."
     },
     {
-      "name": "photo_upload_directory_path.profiles",
+      "name": "photo_upload_directory_path.user_profiles",
       "type": "java.lang.String",
-      "description": "Directory path where a profile photo can be uploaded."
+      "description": "Directory path where a user profile photo can be uploaded."
     }
   ]
 }

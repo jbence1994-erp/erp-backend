@@ -65,13 +65,13 @@ public class ProductPhotoController {
             @RequestParam("file") MultipartFile file
     ) {
         try {
-            var productPhotoDto = toCreatePhotoDtoMapper.toDto(productId, file);
+            var photoDto = toCreatePhotoDtoMapper.toDto(productId, file);
 
-            var productPhotoFileName = photoService.uploadPhoto(productPhotoDto);
+            var photoFileName = photoService.uploadPhoto(photoDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(new PhotoResponse(productPhotoFileName));
+                    .body(new PhotoResponse(photoFileName));
         } catch (ProductNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
