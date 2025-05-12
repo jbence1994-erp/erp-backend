@@ -24,7 +24,7 @@ public class ProductPhotoService implements PhotoService {
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
 
-    @Value("${photo_upload_directory_path.products}")
+    @Value("${erp.photo-upload-directory-path.products}")
     private String photoUploadDirectoryPath;
 
     @Override

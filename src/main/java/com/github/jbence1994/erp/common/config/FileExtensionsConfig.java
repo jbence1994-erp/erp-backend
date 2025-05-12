@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-@ConfigurationProperties(prefix = "file-extensions-config")
+@ConfigurationProperties(prefix = "erp.file-extensions-config")
 @AllArgsConstructor
 @Getter
 public class FileExtensionsConfig {
