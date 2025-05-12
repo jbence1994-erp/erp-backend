@@ -11,9 +11,10 @@ spring:
   flyway:
     enabled: false
 
-file-extensions-config:
-  allowed-file-extensions: jpg,jpeg,png,bmp
+erp:
+  file-extensions-config:
+    allowed-file-extensions: jpg,jpeg,png,bmp
 
-photo_upload_directory_path:
-  products: ${PRODUCT_PHOTOS_UPLOADS_DIRECTORY_PATH}
-  user_profiles: ${USER_PROFILE_PHOTOS_UPLOADS_DIRECTORY_PATH}
+  photo-upload-directory-path:
+    products: ${PRODUCT_PHOTOS_UPLOADS_DIRECTORY_PATH}
+    user-profiles: ${USER_PROFILE_PHOTOS_UPLOADS_DIRECTORY_PATH}
