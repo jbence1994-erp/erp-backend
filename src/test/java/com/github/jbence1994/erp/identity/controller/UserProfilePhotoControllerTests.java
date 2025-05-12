@@ -64,11 +64,11 @@ class UserProfilePhotoControllerTests {
         return Stream.of(
                 Arguments.of(
                         "UserProfileNotFoundException - HTTP 404",
-                        new UserProfileNotFoundException(3L),
-                        3L,
+                        new UserProfileNotFoundException(1L),
+                        1L,
                         multipartFile(),
                         HttpStatus.NOT_FOUND,
-                        "Felhasználói fiók a következő azonosítóval: #3 nem található"
+                        "Felhasználói fiók a következő azonosítóval: #1 nem található"
                 ),
                 Arguments.of(
                         "EmptyFileException - HTTP 400",
@@ -139,24 +139,24 @@ class UserProfilePhotoControllerTests {
         return Stream.of(
                 Arguments.of(
                         "UserProfileNotFoundException - HTTP 400",
-                        new UserProfileNotFoundException(3L),
-                        3L,
+                        new UserProfileNotFoundException(1L),
+                        1L,
                         HttpStatus.NOT_FOUND,
-                        "Felhasználói fiók a következő azonosítóval: #3 nem található"
+                        "Felhasználói fiók a következő azonosítóval: #1 nem található"
                 ),
                 Arguments.of(
                         "UserProfilePhotoNotFoundException - HTTP 400",
-                        new UserProfilePhotoNotFoundException(3L),
-                        3L,
+                        new UserProfilePhotoNotFoundException(1L),
+                        1L,
                         HttpStatus.NOT_FOUND,
-                        "Felhasználói fiók a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel"
+                        "Felhasználói fiók a következő azonosítóval: #1 nem rendelkezik feltöltött fényképpel"
                 ),
                 Arguments.of(
                         "UserProfilePhotoDownloadException - HTTP 500",
-                        new UserProfilePhotoDownloadException(3L),
-                        3L,
+                        new UserProfilePhotoDownloadException(1L),
+                        1L,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép letöltése az alábbi felhasználói fiókhoz: #3 sikeretelen volt"
+                        "Fénykép letöltése az alábbi felhasználói fiókhoz: #1 sikeretelen volt"
                 )
         );
     }

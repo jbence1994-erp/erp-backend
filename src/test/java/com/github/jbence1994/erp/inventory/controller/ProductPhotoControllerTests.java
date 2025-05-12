@@ -64,11 +64,11 @@ class ProductPhotoControllerTests {
         return Stream.of(
                 Arguments.of(
                         "ProductNotFoundException - HTTP 404",
-                        new ProductNotFoundException(3L),
-                        3L,
+                        new ProductNotFoundException(1L),
+                        1L,
                         multipartFile(),
                         HttpStatus.NOT_FOUND,
-                        "Termék a következő azonosítóval: #3 nem található"
+                        "Termék a következő azonosítóval: #1 nem található"
                 ),
                 Arguments.of(
                         "EmptyFileException - HTTP 400",
@@ -139,24 +139,24 @@ class ProductPhotoControllerTests {
         return Stream.of(
                 Arguments.of(
                         "ProductNotFoundException - HTTP 400",
-                        new ProductNotFoundException(3L),
-                        3L,
+                        new ProductNotFoundException(1L),
+                        1L,
                         HttpStatus.NOT_FOUND,
-                        "Termék a következő azonosítóval: #3 nem található"
+                        "Termék a következő azonosítóval: #1 nem található"
                 ),
                 Arguments.of(
                         "ProductPhotoNotFoundException - HTTP 400",
-                        new ProductPhotoNotFoundException(3L),
-                        3L,
+                        new ProductPhotoNotFoundException(1L),
+                        1L,
                         HttpStatus.NOT_FOUND,
-                        "Termék a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel"
+                        "Termék a következő azonosítóval: #1 nem rendelkezik feltöltött fényképpel"
                 ),
                 Arguments.of(
                         "ProductPhotoDownloadException - HTTP 500",
-                        new ProductPhotoDownloadException(3L),
-                        3L,
+                        new ProductPhotoDownloadException(1L),
+                        1L,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép letöltése az alábbi termékhez: #3 sikeretelen volt"
+                        "Fénykép letöltése az alábbi termékhez: #1 sikeretelen volt"
                 )
         );
     }
