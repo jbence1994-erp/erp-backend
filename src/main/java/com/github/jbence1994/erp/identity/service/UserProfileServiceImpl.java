@@ -19,7 +19,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfile getUserProfile(Long id) {
         return userProfileRepository.findById(id)
-                .filter(profile -> !profile.isDeleted())
+                .filter(userProfile -> !userProfile.isDeleted())
                 .orElseThrow(() -> new UserProfileNotFoundException(id));
     }
 
