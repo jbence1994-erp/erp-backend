@@ -15,12 +15,6 @@ public class FileSystemUtils implements FileUtils {
     private static final String PHOTOS_SUBDIRECTORY_NAME = "photos";
 
     @Override
-    public byte[] readAllBytes(String customSubdirectoryName, String fileName) throws IOException {
-        var filePath = resolvePath(String.format("%s/%s", customSubdirectoryName, fileName));
-        return Files.readAllBytes(filePath);
-    }
-
-    @Override
     public String createPhotoUploadsDirectoryStructure(String customSubdirectoryName) throws IOException {
         var directoryPath = resolvePath(customSubdirectoryName);
         if (!Files.exists(directoryPath)) {
@@ -40,7 +34,13 @@ public class FileSystemUtils implements FileUtils {
         return fileName;
     }
 
+    @Override
+    public byte[] readAllBytes(String customSubdirectoryName, String fileName) throws IOException {
+        var filePath = resolvePath(String.format("%s/%s", customSubdirectoryName, fileName));
+        return Files.readAllBytes(filePath);
+    }
+
     private Path resolvePath(String path) {
-        return Paths.get(String.format("%s/%s/%s", UPLOADS_DIRECTORY_NAME, PHOTOS_SUBDIRECTORY_NAME, path));
+        return Paths.get(UPLOADS_DIRECTORY_NAME, PHOTOS_SUBDIRECTORY_NAME, path);
     }
 }
