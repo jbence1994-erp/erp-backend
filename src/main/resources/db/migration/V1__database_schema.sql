@@ -29,23 +29,13 @@ CREATE TABLE IF NOT EXISTS products
             ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS users
-(
-    id         BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(255) NOT NULL,
-    last_name  VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS profiles
+CREATE TABLE IF NOT EXISTS user_profiles
 (
     id              BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    first_name      VARCHAR(255) NOT NULL,
+    last_name       VARCHAR(255) NOT NULL,
     email           VARCHAR(75)  NOT NULL,
     password        VARCHAR(255) NOT NULL,
     photo_file_name VARCHAR(41),
-    is_deleted      TINYINT      NOT NULL DEFAULT 0,
-    user_id         BIGINT       NOT NULL,
-    CONSTRAINT fk_user
-        FOREIGN KEY (user_id) REFERENCES users (id)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE
+    is_deleted      TINYINT      NOT NULL DEFAULT 0
 );
