@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/products/{productId}/photo")
 @CrossOrigin
 public class ProductPhotoController {
-    @Qualifier("productPhotoService")
     private final PhotoService photoService;
     private final MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper;
 
