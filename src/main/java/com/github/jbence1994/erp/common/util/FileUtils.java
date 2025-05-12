@@ -1,15 +1,13 @@
 package com.github.jbence1994.erp.common.util;
 
-import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 public interface FileUtils {
-    String createPhotoUploadsDirectoryStructure(String customSubdirectoryName) throws IOException;
+    void store(String path, String fileName, InputStream stream) throws IOException;
 
-    String storePhoto(CreatePhotoDto photo, String directoryStructurePath) throws IOException;
-
-    byte[] readAllBytes(String customSubdirectoryName, String fileName) throws IOException;
+    byte[] read(String path, String fileName) throws IOException;
 }

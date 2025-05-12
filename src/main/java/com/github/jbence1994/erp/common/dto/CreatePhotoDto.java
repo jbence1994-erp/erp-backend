@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
@@ -24,6 +25,10 @@ public abstract class CreatePhotoDto {
 
     public InputStream getInputStream() {
         return new ByteArrayInputStream(inputStreamBytes);
+    }
+
+    public String createFileName() {
+        return String.format("%s.%s", UUID.randomUUID(), StringUtils.getFilenameExtension(originalFilename));
     }
 
     public String getFileExtension() {

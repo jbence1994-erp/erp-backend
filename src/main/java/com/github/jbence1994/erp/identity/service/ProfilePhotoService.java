@@ -25,21 +25,6 @@ public class ProfilePhotoService implements PhotoService {
     private static final String PROFILES_SUBDIRECTORY_NAME = "profiles";
 
     @Override
-    public PhotoDto getPhoto(Long id) {
-        var profile = profileService.getProfile(id);
-
-        byte[] profilePhotoBytes;
-
-        try {
-            profilePhotoBytes = fileUtils.readAllBytes(PROFILES_SUBDIRECTORY_NAME, profile.getPhotoFileName());
-        } catch (Exception exception) {
-            throw new ProfilePhotoNotFoundException(id);
-        }
-
-        return new ProfilePhotoDto(id, profilePhotoBytes, profile.getPhotoFileExtension());
-    }
-
-    @Override
     public String uploadPhoto(CreatePhotoDto photo) {
         var profilePhoto = (CreateProfilePhotoDto) photo;
 
@@ -52,13 +37,44 @@ public class ProfilePhotoService implements PhotoService {
                 throw new ProfileAlreadyHasPhotoUploadedException(profilePhoto.getProfileId());
             }
 
-            var directoryStructurePath = fileUtils.createPhotoUploadsDirectoryStructure(PROFILES_SUBDIRECTORY_NAME);
-            profile.setPhotoFileName(fileUtils.storePhoto(profilePhoto, directoryStructurePath));
+            var photoName = profilePhoto.createFileName();
+            fileUtils.store(
+                    getPhotoUploadsPath(),
+                    photoName,
+                    profilePhoto.getInputStream()
+            );
+            profile.setPhotoFileName(photoName);
             profileService.updateProfile(profile);
 
             return profile.getPhotoFileName();
         } catch (IOException exception) {
             throw new ProfilePhotoUploadException(profilePhoto.getProfileId());
         }
+    }
+
+    @Override
+    public PhotoDto getPhoto(Long id) {
+        try {
+            var profile = profileService.getProfile(id);
+
+            byte[] photoBytes = fileUtils.read(
+                    getPhotoUploadsPath(),
+                    profile.getPhotoFileName()
+            );
+
+            return new ProfilePhotoDto(id, photoBytes, profile.getPhotoFileExtension());
+        } catch (Exception exception) {
+            throw new ProfilePhotoNotFoundException(id);
+        }
+    }
+
+    // FIXME: Move to environment variable and YAML config
+    private String getPhotoUploadsPath() {
+        return String.format(
+                "%s/%s/%s",
+                UPLOADS_DIRECTORY_NAME,
+                PHOTOS_SUBDIRECTORY_NAME,
+                PROFILES_SUBDIRECTORY_NAME
+        );
     }
 }
