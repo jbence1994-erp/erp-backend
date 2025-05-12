@@ -5,11 +5,11 @@ import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
 import com.github.jbence1994.erp.common.service.PhotoService;
-import com.github.jbence1994.erp.identity.dto.CreateProfilePhotoDto;
-import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUploadedException;
-import com.github.jbence1994.erp.identity.exception.ProfileNotFoundException;
-import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
-import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
+import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,24 +25,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/profiles/{profileId}/photo")
+@RequestMapping("/api/userProfiles/{userProfileId}/photo")
 @CrossOrigin
-public class ProfilePhotoController {
+public class UserProfilePhotoController {
     private final PhotoService photoService;
-    private final MultipartFileToCreatePhotoDtoMapper<CreateProfilePhotoDto> toCreatePhotoDtoMapper;
+    private final MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper;
 
-    public ProfilePhotoController(
-            @Qualifier("profilePhotoService") PhotoService photoService,
-            MultipartFileToCreatePhotoDtoMapper<CreateProfilePhotoDto> toCreatePhotoDtoMapper
+    public UserProfilePhotoController(
+            @Qualifier("userProfilePhotoService") PhotoService photoService,
+            MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper
     ) {
         this.photoService = photoService;
         this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
     }
 
     @GetMapping
-    public ResponseEntity<?> getProfilePhoto(@PathVariable Long profileId) {
+    public ResponseEntity<?> getUserProfilePhoto(@PathVariable Long userProfileId) {
         try {
-            var photo = photoService.getPhoto(profileId);
+            var photo = photoService.getPhoto(userProfileId);
 
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
@@ -51,7 +51,7 @@ public class ProfilePhotoController {
                     .status(HttpStatus.OK)
                     .headers(headers)
                     .body(photo.getPhotoBytes());
-        } catch (ProfilePhotoNotFoundException exception) {
+        } catch (UserProfilePhotoNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
@@ -59,31 +59,31 @@ public class ProfilePhotoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> uploadProfilePhoto(
-            @PathVariable Long profileId,
+    public ResponseEntity<?> uploadUserProfilePhoto(
+            @PathVariable Long userProfileId,
             @RequestParam("file") MultipartFile file
     ) {
         try {
-            var profilePhotoDto = toCreatePhotoDtoMapper.toDto(profileId, file);
+            var photoDto = toCreatePhotoDtoMapper.toDto(userProfileId, file);
 
-            var profilePhotoFileName = photoService.uploadPhoto(profilePhotoDto);
+            var photoFileName = photoService.uploadPhoto(photoDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(new PhotoResponse(profilePhotoFileName));
-        } catch (ProfileNotFoundException exception) {
+                    .body(new PhotoResponse(photoFileName));
+        } catch (UserProfileNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         } catch (
                 EmptyFileException |
                 InvalidFileExtensionException |
-                ProfileAlreadyHasPhotoUploadedException exception
+                UserProfileAlreadyHasPhotoUploadedException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(exception.getMessage());
-        } catch (ProfilePhotoUploadException exception) {
+        } catch (UserProfilePhotoUploadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());
