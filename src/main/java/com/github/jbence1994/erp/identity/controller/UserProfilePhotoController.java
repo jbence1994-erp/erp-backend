@@ -7,6 +7,7 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,7 +71,7 @@ public class UserProfilePhotoController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new PhotoResponse(photoFileName));
-        } catch (UserProfilePhotoNotFoundException exception) {
+        } catch (UserProfileNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());

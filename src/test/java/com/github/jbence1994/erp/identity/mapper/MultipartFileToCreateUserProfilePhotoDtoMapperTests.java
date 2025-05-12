@@ -1,6 +1,6 @@
 package com.github.jbence1994.erp.identity.mapper;
 
-import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,16 +16,16 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
 @ExtendWith(MockitoExtension.class)
-class MultipartFileToCreateProfilePhotoDtoMapperTests {
+class MultipartFileToCreateUserProfilePhotoDtoMapperTests {
 
     @InjectMocks
-    private MultipartFileToCreateProfilePhotoDtoMapper toProfilePhotoDtoMapper;
+    private MultipartFileToCreateUserProfilePhotoDtoMapper toProfilePhotoDtoMapper;
 
     @Test
     public void toDtoTest_HappyPath() throws IOException {
         var result = toProfilePhotoDtoMapper.toDto(1L, multipartFile());
 
-        assertEquals(1L, result.getProfileId());
+        assertEquals(1L, result.getUserProfileId());
         assertEquals(multipartFile().isEmpty(), result.isEmpty());
         assertEquals(multipartFile().getOriginalFilename(), result.getOriginalFilename());
         assertEquals(multipartFile().getSize(), result.getSize());
@@ -40,7 +40,7 @@ class MultipartFileToCreateProfilePhotoDtoMapperTests {
         doThrow(new IOException("Disk error")).when(multipartFile).getBytes();
 
         assertThrows(
-                ProfilePhotoUploadException.class,
+                UserProfilePhotoUploadException.class,
                 () -> toProfilePhotoDtoMapper.toDto(1L, multipartFile)
         );
     }
