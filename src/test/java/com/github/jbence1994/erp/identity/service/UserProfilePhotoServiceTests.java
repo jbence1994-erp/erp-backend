@@ -4,6 +4,7 @@ import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,26 +54,6 @@ class UserProfilePhotoServiceTests {
     }
 
     @Test
-    public void getPhotoTest_HappyPath() throws IOException {
-        when(fileUtils.read(any(), any())).thenReturn(new byte[FILE_SIZE]);
-
-        var result = userProfilePhotoService.getPhoto(1L);
-
-        assertTrue(result.getPhotoBytes().length > 0);
-        assertEquals(JPEG, result.getFileExtension());
-    }
-
-    @Test
-    public void getPhotoTest_UnhappyPath() throws IOException {
-        when(fileUtils.read(any(), any())).thenThrow(new IOException());
-
-        assertThrows(
-                UserProfilePhotoNotFoundException.class,
-                () -> userProfilePhotoService.getPhoto(1L)
-        );
-    }
-
-    @Test
     public void uploadPhotoTest_HappyPath() throws IOException {
         when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
         when(createUserProfilePhotoDto.createFileName()).thenReturn(PHOTO_FILE_NAME);
@@ -93,13 +74,43 @@ class UserProfilePhotoServiceTests {
     }
 
     @Test
-    public void uploadPhotoTest_UnhappyPath_UserProfilePhotoUploadFailure() throws IOException {
+    public void uploadPhotoTest_UnhappyPath_IOException() throws IOException {
         when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
         doThrow(new IOException("Disk error")).when(fileUtils).store(any(), any(), any());
 
         assertThrows(
                 UserProfilePhotoUploadException.class,
                 () -> userProfilePhotoService.uploadPhoto(createUserProfilePhotoDto)
+        );
+    }
+
+    @Test
+    public void getPhotoTest_HappyPath() throws IOException {
+        when(fileUtils.read(any(), any())).thenReturn(new byte[FILE_SIZE]);
+
+        var result = userProfilePhotoService.getPhoto(1L);
+
+        assertTrue(result.getPhotoBytes().length > 0);
+        assertEquals(JPEG, result.getFileExtension());
+    }
+
+    @Test
+    public void getPhotoTest_UnhappyPath_UserProfileHasNoPhoto() {
+        when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
+
+        assertThrows(
+                UserProfilePhotoNotFoundException.class,
+                () -> userProfilePhotoService.getPhoto(1L)
+        );
+    }
+
+    @Test
+    public void getPhotoTest_UnhappyPath_IOException() throws IOException {
+        when(fileUtils.read(any(), any())).thenThrow(new IOException("Disk error"));
+
+        assertThrows(
+                UserProfilePhotoDownloadException.class,
+                () -> userProfilePhotoService.getPhoto(1L)
         );
     }
 }

@@ -7,6 +7,7 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import com.github.jbence1994.erp.identity.service.UserProfilePhotoService;
@@ -50,29 +51,6 @@ class UserProfilePhotoControllerTests {
     private UserProfilePhotoController userProfilePhotoController;
 
     @Test
-    public void getUserProfilePhotoTest_HappyPath() {
-        when(userProfilePhotoService.getPhoto(any())).thenReturn(userProfilePhotoDto());
-
-        var result = userProfilePhotoController.getUserProfilePhoto(1L);
-
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(IMAGE, result.getHeaders().getContentType().getType());
-        assertEquals(JPEG, result.getHeaders().getContentType().getSubtype());
-        assertInstanceOf(byte[].class, result.getBody());
-    }
-
-    @Test
-    public void getUserProfilePhotoTest_UnhappyPath_UserProfilePhotoNotFound() {
-        when(userProfilePhotoService.getPhoto(any())).thenThrow(new UserProfilePhotoNotFoundException(3L));
-
-        var result = userProfilePhotoController.getUserProfilePhoto(3L);
-
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertNotNull(result.getBody());
-        assertEquals("Felhasználói fiók a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel", result.getBody().toString());
-    }
-
-    @Test
     public void uploadUserProfilePhotoTest_HappyPath() {
         when(userProfilePhotoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
 
@@ -82,7 +60,7 @@ class UserProfilePhotoControllerTests {
         assertEquals(new PhotoResponse(PHOTO_FILE_NAME), result.getBody());
     }
 
-    static Stream<Arguments> unhappyPathParams() {
+    static Stream<Arguments> uploadUserProfilePhotoUnhappyPathParams() {
         return Stream.of(
                 Arguments.of(
                         "UserProfileNotFoundException - HTTP 404",
@@ -128,7 +106,7 @@ class UserProfilePhotoControllerTests {
     }
 
     @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("unhappyPathParams")
+    @MethodSource("uploadUserProfilePhotoUnhappyPathParams")
     public void uploadUserProfilePhotoTest_UnhappyPaths(
             String testCase,
             Exception exception,
@@ -143,5 +121,62 @@ class UserProfilePhotoControllerTests {
 
         assertEquals(httpStatus, result.getStatusCode());
         assertEquals(exceptionMessage, result.getBody());
+    }
+
+    @Test
+    public void getUserProfilePhotoTest_HappyPath() {
+        when(userProfilePhotoService.getPhoto(any())).thenReturn(userProfilePhotoDto());
+
+        var result = userProfilePhotoController.getUserProfilePhoto(1L);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(IMAGE, result.getHeaders().getContentType().getType());
+        assertEquals(JPEG, result.getHeaders().getContentType().getSubtype());
+        assertInstanceOf(byte[].class, result.getBody());
+    }
+
+    static Stream<Arguments> getUserProfilePhotoUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "UserProfileNotFoundException - HTTP 400",
+                        new UserProfileNotFoundException(3L),
+                        3L,
+                        HttpStatus.NOT_FOUND,
+                        "Felhasználói fiók a következő azonosítóval: #3 nem található"
+                ),
+                Arguments.of(
+                        "UserProfilePhotoNotFoundException - HTTP 400",
+                        new UserProfilePhotoNotFoundException(3L),
+                        3L,
+                        HttpStatus.NOT_FOUND,
+                        "Felhasználói fiók a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel"
+                ),
+                Arguments.of(
+                        "UserProfilePhotoDownloadException - HTTP 500",
+                        new UserProfilePhotoDownloadException(3L),
+                        3L,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Fénykép letöltése az alábbi felhasználói fiókhoz: #3 sikeretelen volt"
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("getUserProfilePhotoUnhappyPathParams")
+    public void getUserProfilePhotoTest_UnhappyPaths(
+            String testCase,
+            Exception exception,
+            Long userProfileId,
+            HttpStatus httpStatus,
+            String exceptionMessage
+
+    ) {
+        when(userProfilePhotoService.getPhoto(any())).thenThrow(exception);
+
+        var result = userProfilePhotoController.getUserProfilePhoto(userProfileId);
+
+        assertEquals(httpStatus, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(exceptionMessage, result.getBody().toString());
     }
 }
