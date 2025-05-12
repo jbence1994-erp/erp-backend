@@ -163,6 +163,7 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <excludes>
+                        <exclude>com/github/jbence1994/erp/common/config/*</exclude>
                         <exclude>com/github/jbence1994/erp/common/dto/CreatePhotoDto*</exclude>
                         <exclude>com/github/jbence1994/erp/common/util/FileSystemUtils*</exclude>
                         <exclude>com/github/jbence1994/erp/identity/config/*</exclude>
