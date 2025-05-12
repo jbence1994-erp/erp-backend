@@ -25,21 +25,6 @@ public class ProductPhotoService implements PhotoService {
     private static final String PRODUCTS_SUBDIRECTORY_NAME = "products";
 
     @Override
-    public PhotoDto getPhoto(Long id) {
-        var product = productService.getProduct(id);
-
-        byte[] productPhotoBytes;
-
-        try {
-            productPhotoBytes = fileUtils.readAllBytes(PRODUCTS_SUBDIRECTORY_NAME, product.getPhotoFileName());
-        } catch (Exception exception) {
-            throw new ProductPhotoNotFoundException(id);
-        }
-
-        return new ProductPhotoDto(id, productPhotoBytes, product.getPhotoFileExtension());
-    }
-
-    @Override
     public String uploadPhoto(CreatePhotoDto photo) {
         var productPhoto = (CreateProductPhotoDto) photo;
 
@@ -52,13 +37,44 @@ public class ProductPhotoService implements PhotoService {
                 throw new ProductAlreadyHasPhotoUploadedException(productPhoto.getProductId());
             }
 
-            var directoryStructurePath = fileUtils.createPhotoUploadsDirectoryStructure(PRODUCTS_SUBDIRECTORY_NAME);
-            product.setPhotoFileName(fileUtils.storePhoto(productPhoto, directoryStructurePath));
+            var photoName = photo.createFileName();
+            fileUtils.store(
+                    getPhotoUploadsPath(),
+                    photoName,
+                    productPhoto.getInputStream()
+            );
+            product.setPhotoFileName(photoName);
             productService.updateProduct(product);
 
             return product.getPhotoFileName();
         } catch (IOException exception) {
             throw new ProductPhotoUploadException(productPhoto.getProductId());
         }
+    }
+
+    @Override
+    public PhotoDto getPhoto(Long id) {
+        try {
+            var product = productService.getProduct(id);
+
+            byte[] photoBytes = fileUtils.read(
+                    getPhotoUploadsPath(),
+                    product.getPhotoFileName()
+            );
+
+            return new ProductPhotoDto(id, photoBytes, product.getPhotoFileExtension());
+        } catch (Exception exception) {
+            throw new ProductPhotoNotFoundException(id);
+        }
+    }
+
+    // FIXME: Move to environment variable and YAML config
+    private String getPhotoUploadsPath() {
+        return String.format(
+                "%s/%s/%s",
+                UPLOADS_DIRECTORY_NAME,
+                PHOTOS_SUBDIRECTORY_NAME,
+                PRODUCTS_SUBDIRECTORY_NAME
+        );
     }
 }
