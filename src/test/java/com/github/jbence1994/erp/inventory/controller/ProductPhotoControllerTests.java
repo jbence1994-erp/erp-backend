@@ -84,7 +84,7 @@ class ProductPhotoControllerTests {
                         1L,
                         multipartFileWithInvalidFileExtension(),
                         HttpStatus.BAD_REQUEST,
-                        "Hibás fájlformátum: .txt"
+                        "Hibás fájlformátum: TXT"
                 ),
                 Arguments.of(
                         "ProductAlreadyHasPhotoUploadedException - HTTP 400",

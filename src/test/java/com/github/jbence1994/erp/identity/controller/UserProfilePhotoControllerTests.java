@@ -84,7 +84,7 @@ class UserProfilePhotoControllerTests {
                         1L,
                         multipartFileWithInvalidFileExtension(),
                         HttpStatus.BAD_REQUEST,
-                        "Hibás fájlformátum: .txt"
+                        "Hibás fájlformátum: TXT"
                 ),
                 Arguments.of(
                         "UserProfileAlreadyHasPhotoUploadedException - HTTP 400",
