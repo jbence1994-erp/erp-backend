@@ -8,6 +8,7 @@ import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/products/{productId}/photo")
 @CrossOrigin
 public class ProductPhotoController {
-    @Qualifier("productPhotoService")
     private final PhotoService photoService;
     private final MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper;
 
@@ -38,25 +38,6 @@ public class ProductPhotoController {
     ) {
         this.photoService = photoService;
         this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getProductPhoto(@PathVariable Long productId) {
-        try {
-            var photo = photoService.getPhoto(productId);
-
-            var headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
-
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .headers(headers)
-                    .body(photo.getPhotoBytes());
-        } catch (ProductPhotoNotFoundException exception) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(exception.getMessage());
-        }
     }
 
     @PostMapping
@@ -85,6 +66,32 @@ public class ProductPhotoController {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(exception.getMessage());
         } catch (ProductPhotoUploadException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(exception.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getProductPhoto(@PathVariable Long productId) {
+        try {
+            var photo = photoService.getPhoto(productId);
+
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(photo.getPhotoBytes());
+        } catch (
+                ProductNotFoundException |
+                ProductPhotoNotFoundException exception
+        ) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(exception.getMessage());
+        } catch (ProductPhotoDownloadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());

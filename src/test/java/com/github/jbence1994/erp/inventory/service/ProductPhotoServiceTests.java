@@ -4,6 +4,7 @@ import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,26 +54,6 @@ class ProductPhotoServiceTests {
     }
 
     @Test
-    public void getPhotoTest_HappyPath() throws IOException {
-        when(fileUtils.read(any(), any())).thenReturn(new byte[FILE_SIZE]);
-
-        var result = productPhotoService.getPhoto(1L);
-
-        assertTrue(result.getPhotoBytes().length > 0);
-        assertEquals(JPEG, result.getFileExtension());
-    }
-
-    @Test
-    public void getPhotoTest_UnhappyPath() throws IOException {
-        when(fileUtils.read(any(), any())).thenThrow(new IOException());
-
-        assertThrows(
-                ProductPhotoNotFoundException.class,
-                () -> productPhotoService.getPhoto(1L)
-        );
-    }
-
-    @Test
     public void uploadPhotoTest_HappyPath() throws IOException {
         when(productService.getProduct(any())).thenReturn(product1());
         when(createProductPhotoDto.createFileName()).thenReturn(PHOTO_FILE_NAME);
@@ -93,13 +74,43 @@ class ProductPhotoServiceTests {
     }
 
     @Test
-    public void uploadPhotoTest_UnhappyPath_ProductPhotoUploadFailure() throws IOException {
+    public void uploadPhotoTest_UnhappyPath_IOException() throws IOException {
         when(productService.getProduct(any())).thenReturn(product1());
         doThrow(new IOException("Disk error")).when(fileUtils).store(any(), any(), any());
 
         assertThrows(
                 ProductPhotoUploadException.class,
                 () -> productPhotoService.uploadPhoto(createProductPhotoDto)
+        );
+    }
+
+    @Test
+    public void getPhotoTest_HappyPath() throws IOException {
+        when(fileUtils.read(any(), any())).thenReturn(new byte[FILE_SIZE]);
+
+        var result = productPhotoService.getPhoto(1L);
+
+        assertTrue(result.getPhotoBytes().length > 0);
+        assertEquals(JPEG, result.getFileExtension());
+    }
+
+    @Test
+    public void getPhotoTest_UnhappyPath_UserProfileHasNoPhoto() {
+        when(productService.getProduct(any())).thenReturn(product1());
+
+        assertThrows(
+                ProductPhotoNotFoundException.class,
+                () -> productPhotoService.getPhoto(1L)
+        );
+    }
+
+    @Test
+    public void getPhotoTest_UnhappyPath_IOException() throws IOException {
+        when(fileUtils.read(any(), any())).thenThrow(new IOException("Disk error"));
+
+        assertThrows(
+                ProductPhotoDownloadException.class,
+                () -> productPhotoService.getPhoto(1L)
         );
     }
 }

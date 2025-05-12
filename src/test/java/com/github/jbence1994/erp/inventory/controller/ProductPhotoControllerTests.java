@@ -7,6 +7,7 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import com.github.jbence1994.erp.inventory.service.ProductPhotoService;
@@ -50,29 +51,6 @@ class ProductPhotoControllerTests {
     private ProductPhotoController productPhotoController;
 
     @Test
-    public void getProductPhotoTest_HappyPath() {
-        when(productPhotoService.getPhoto(any())).thenReturn(productPhotoDto());
-
-        var result = productPhotoController.getProductPhoto(1L);
-
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(IMAGE, result.getHeaders().getContentType().getType());
-        assertEquals(JPEG, result.getHeaders().getContentType().getSubtype());
-        assertInstanceOf(byte[].class, result.getBody());
-    }
-
-    @Test
-    public void getProductPhotoTest_UnhappyPath_ProductPhotoNotFound() {
-        when(productPhotoService.getPhoto(any())).thenThrow(new ProductPhotoNotFoundException(3L));
-
-        var result = productPhotoController.getProductPhoto(3L);
-
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertNotNull(result.getBody());
-        assertEquals("Termék a következő azonosítóval: #3 nem rendelkezik feltöltött fényképpel", result.getBody().toString());
-    }
-
-    @Test
     public void uploadProductPhotoTest_HappyPath() {
         when(productPhotoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
 
@@ -82,15 +60,15 @@ class ProductPhotoControllerTests {
         assertEquals(new PhotoResponse(PHOTO_FILE_NAME), result.getBody());
     }
 
-    private static Stream<Arguments> unhappyPathParams() {
+    private static Stream<Arguments> uploadProductPhotoUnhappyPathParams() {
         return Stream.of(
                 Arguments.of(
                         "ProductNotFoundException - HTTP 404",
-                        new ProductNotFoundException(3L),
-                        3L,
+                        new ProductNotFoundException(1L),
+                        1L,
                         multipartFile(),
                         HttpStatus.NOT_FOUND,
-                        "Termék a következő azonosítóval: #3 nem található"
+                        "Termék a következő azonosítóval: #1 nem található"
                 ),
                 Arguments.of(
                         "EmptyFileException - HTTP 400",
@@ -128,7 +106,7 @@ class ProductPhotoControllerTests {
     }
 
     @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("unhappyPathParams")
+    @MethodSource("uploadProductPhotoUnhappyPathParams")
     public void uploadProductPhotoTest_UnhappyPaths(
             String testCase,
             Exception exception,
@@ -143,5 +121,61 @@ class ProductPhotoControllerTests {
 
         assertEquals(httpStatus, result.getStatusCode());
         assertEquals(exceptionMessage, result.getBody());
+    }
+
+    @Test
+    public void getProductPhotoTest_HappyPath() {
+        when(productPhotoService.getPhoto(any())).thenReturn(productPhotoDto());
+
+        var result = productPhotoController.getProductPhoto(1L);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(IMAGE, result.getHeaders().getContentType().getType());
+        assertEquals(JPEG, result.getHeaders().getContentType().getSubtype());
+        assertInstanceOf(byte[].class, result.getBody());
+    }
+
+    static Stream<Arguments> getUserProfilePhotoUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "ProductNotFoundException - HTTP 400",
+                        new ProductNotFoundException(1L),
+                        1L,
+                        HttpStatus.NOT_FOUND,
+                        "Termék a következő azonosítóval: #1 nem található"
+                ),
+                Arguments.of(
+                        "ProductPhotoNotFoundException - HTTP 400",
+                        new ProductPhotoNotFoundException(1L),
+                        1L,
+                        HttpStatus.NOT_FOUND,
+                        "Termék a következő azonosítóval: #1 nem rendelkezik feltöltött fényképpel"
+                ),
+                Arguments.of(
+                        "ProductPhotoDownloadException - HTTP 500",
+                        new ProductPhotoDownloadException(1L),
+                        1L,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Fénykép letöltése az alábbi termékhez: #1 sikeretelen volt"
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("getUserProfilePhotoUnhappyPathParams")
+    public void getProductPhotoTest_UnhappyPaths(
+            String testCase,
+            Exception exception,
+            Long productId,
+            HttpStatus httpStatus,
+            String exceptionMessage
+    ) {
+        when(productPhotoService.getPhoto(any())).thenThrow(exception);
+
+        var result = productPhotoController.getProductPhoto(productId);
+
+        assertEquals(httpStatus, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(exceptionMessage, result.getBody().toString());
     }
 }

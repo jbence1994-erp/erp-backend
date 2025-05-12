@@ -59,7 +59,7 @@ class UserProfileServiceImplTests {
 
         assertThrows(
                 UserProfileNotFoundException.class,
-                () -> userProfileService.getUserProfile(5L)
+                () -> userProfileService.getUserProfile(1L)
         );
     }
 
