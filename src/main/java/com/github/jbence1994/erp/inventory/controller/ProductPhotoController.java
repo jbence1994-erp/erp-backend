@@ -40,25 +40,6 @@ public class ProductPhotoController {
         this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<?> getProductPhoto(@PathVariable Long productId) {
-        try {
-            var photo = photoService.getPhoto(productId);
-
-            var headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
-
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .headers(headers)
-                    .body(photo.getPhotoBytes());
-        } catch (ProductPhotoNotFoundException exception) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(exception.getMessage());
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> uploadProductPhoto(
             @PathVariable Long productId,
@@ -87,6 +68,25 @@ public class ProductPhotoController {
         } catch (ProductPhotoUploadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(exception.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getProductPhoto(@PathVariable Long productId) {
+        try {
+            var photo = photoService.getPhoto(productId);
+
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(photo.getPhotoBytes());
+        } catch (ProductPhotoNotFoundException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         }
     }

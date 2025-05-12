@@ -39,25 +39,6 @@ public class UserProfilePhotoController {
         this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
     }
 
-    @GetMapping
-    public ResponseEntity<?> getUserProfilePhoto(@PathVariable Long userProfileId) {
-        try {
-            var photo = photoService.getPhoto(userProfileId);
-
-            var headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
-
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .headers(headers)
-                    .body(photo.getPhotoBytes());
-        } catch (UserProfilePhotoNotFoundException exception) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(exception.getMessage());
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> uploadUserProfilePhoto(
             @PathVariable Long userProfileId,
@@ -86,6 +67,25 @@ public class UserProfilePhotoController {
         } catch (UserProfilePhotoUploadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(exception.getMessage());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getUserProfilePhoto(@PathVariable Long userProfileId) {
+        try {
+            var photo = photoService.getPhoto(userProfileId);
+
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .headers(headers)
+                    .body(photo.getPhotoBytes());
+        } catch (UserProfilePhotoNotFoundException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         }
     }
