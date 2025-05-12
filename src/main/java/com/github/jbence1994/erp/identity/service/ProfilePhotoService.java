@@ -11,18 +11,21 @@ import com.github.jbence1994.erp.identity.exception.ProfileAlreadyHasPhotoUpload
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.ProfilePhotoUploadException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProfilePhotoService implements PhotoService {
     private final ProfileService profileService;
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
 
-    private static final String PROFILES_SUBDIRECTORY_NAME = "profiles";
+    @Value("${photo_upload_directory_path.profiles}")
+    private String photoUploadDirectoryPath;
 
     @Override
     public String uploadPhoto(CreatePhotoDto photo) {
@@ -39,7 +42,7 @@ public class ProfilePhotoService implements PhotoService {
 
             var photoName = profilePhoto.createFileName();
             fileUtils.store(
-                    getPhotoUploadsPath(),
+                    photoUploadDirectoryPath,
                     photoName,
                     profilePhoto.getInputStream()
             );
@@ -58,7 +61,7 @@ public class ProfilePhotoService implements PhotoService {
             var profile = profileService.getProfile(id);
 
             byte[] photoBytes = fileUtils.read(
-                    getPhotoUploadsPath(),
+                    photoUploadDirectoryPath,
                     profile.getPhotoFileName()
             );
 
@@ -66,15 +69,5 @@ public class ProfilePhotoService implements PhotoService {
         } catch (Exception exception) {
             throw new ProfilePhotoNotFoundException(id);
         }
-    }
-
-    // FIXME: Move to environment variable and YAML config
-    private String getPhotoUploadsPath() {
-        return String.format(
-                "%s/%s/%s",
-                UPLOADS_DIRECTORY_NAME,
-                PHOTOS_SUBDIRECTORY_NAME,
-                PROFILES_SUBDIRECTORY_NAME
-        );
     }
 }

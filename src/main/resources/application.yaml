@@ -13,3 +13,7 @@ spring:
 
 file-extensions-config:
   allowed-file-extensions: jpg,jpeg,png,bmp
+
+photo_upload_directory_path:
+  products: ${PRODUCT_PHOTOS_UPLOADS_DIRECTORY_PATH}
+  profiles: ${PROFILE_PHOTOS_UPLOADS_DIRECTORY_PATH}
