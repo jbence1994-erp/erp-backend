@@ -1,16 +1,16 @@
-package com.github.jbence1994.erp.inventory.controller;
+package com.github.jbence1994.erp.identity.controller;
 
 import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
 import com.github.jbence1994.erp.common.service.PhotoService;
-import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
-import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
-import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
+import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,46 +26,46 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/products/{productId}/photo")
+@RequestMapping("/api/userProfiles/{userProfileId}/photo")
 @CrossOrigin
-public class ProductPhotoController {
+public class UserProfilePhotoController {
     private final PhotoService photoService;
-    private final MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper;
+    private final MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper;
 
-    public ProductPhotoController(
-            @Qualifier("productPhotoService") PhotoService photoService,
-            MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper
+    public UserProfilePhotoController(
+            @Qualifier("userProfilePhotoService") PhotoService photoService,
+            MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper
     ) {
         this.photoService = photoService;
         this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
     }
 
     @PostMapping
-    public ResponseEntity<?> uploadProductPhoto(
-            @PathVariable Long productId,
+    public ResponseEntity<?> uploadUserProfilePhoto(
+            @PathVariable Long userProfileId,
             @RequestParam("file") MultipartFile file
     ) {
         try {
-            var photoDto = toCreatePhotoDtoMapper.toDto(productId, file);
+            var photoDto = toCreatePhotoDtoMapper.toDto(userProfileId, file);
 
             var photoFileName = photoService.uploadPhoto(photoDto);
 
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new PhotoResponse(photoFileName));
-        } catch (ProductNotFoundException exception) {
+        } catch (UserProfileNotFoundException exception) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         } catch (
                 EmptyFileException |
                 InvalidFileExtensionException |
-                ProductAlreadyHasPhotoUploadedException exception
+                UserProfileAlreadyHasPhotoUploadedException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(exception.getMessage());
-        } catch (ProductPhotoUploadException exception) {
+        } catch (UserProfilePhotoUploadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());
@@ -73,9 +73,9 @@ public class ProductPhotoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getProductPhoto(@PathVariable Long productId) {
+    public ResponseEntity<?> getUserProfilePhoto(@PathVariable Long userProfileId) {
         try {
-            var photo = photoService.getPhoto(productId);
+            var photo = photoService.getPhoto(userProfileId);
 
             var headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType(String.format("image/%s", photo.getFileExtension())));
@@ -85,13 +85,13 @@ public class ProductPhotoController {
                     .headers(headers)
                     .body(photo.getPhotoBytes());
         } catch (
-                ProductNotFoundException |
-                ProductPhotoNotFoundException exception
+                UserProfileNotFoundException |
+                UserProfilePhotoNotFoundException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
-        } catch (ProductPhotoDownloadException exception) {
+        } catch (UserProfilePhotoDownloadException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());

@@ -58,7 +58,7 @@ class ProductServiceImplTests {
 
         assertThrows(
                 ProductNotFoundException.class,
-                () -> productService.getProduct(3L)
+                () -> productService.getProduct(1L)
         );
     }
 

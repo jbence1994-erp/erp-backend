@@ -4,11 +4,11 @@ import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
 import lombok.Getter;
 
 @Getter
-public class CreateProfilePhotoDto extends CreatePhotoDto {
-    private final Long profileId;
+public class CreateUserProfilePhotoDto extends CreatePhotoDto {
+    private final Long userProfileId;
 
-    public CreateProfilePhotoDto(
-            Long profileId,
+    public CreateUserProfilePhotoDto(
+            Long userProfileId,
             boolean isEmpty,
             String originalFilename,
             Long size,
@@ -16,6 +16,6 @@ public class CreateProfilePhotoDto extends CreatePhotoDto {
             byte[] inputStreamBytes
     ) {
         super(isEmpty, originalFilename, size, contentType, inputStreamBytes);
-        this.profileId = profileId;
+        this.userProfileId = userProfileId;
     }
 }

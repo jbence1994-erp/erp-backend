@@ -8,36 +8,24 @@ import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductPhotoService implements PhotoService {
     private final ProductService productService;
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
 
-    private static final String PRODUCTS_SUBDIRECTORY_NAME = "products";
-
-    @Override
-    public PhotoDto getPhoto(Long id) {
-        var product = productService.getProduct(id);
-
-        byte[] productPhotoBytes;
-
-        try {
-            productPhotoBytes = fileUtils.readAllBytes(PRODUCTS_SUBDIRECTORY_NAME, product.getPhotoFileName());
-        } catch (Exception exception) {
-            throw new ProductPhotoNotFoundException(id);
-        }
-
-        return new ProductPhotoDto(id, productPhotoBytes, product.getPhotoFileExtension());
-    }
+    @Value("${photo_upload_directory_path.products}")
+    private String photoUploadDirectoryPath;
 
     @Override
     public String uploadPhoto(CreatePhotoDto photo) {
@@ -52,13 +40,38 @@ public class ProductPhotoService implements PhotoService {
                 throw new ProductAlreadyHasPhotoUploadedException(productPhoto.getProductId());
             }
 
-            var directoryStructurePath = fileUtils.createPhotoUploadsDirectoryStructure(PRODUCTS_SUBDIRECTORY_NAME);
-            product.setPhotoFileName(fileUtils.storePhoto(productPhoto, directoryStructurePath));
+            var photoName = photo.createFileName();
+            fileUtils.store(
+                    photoUploadDirectoryPath,
+                    photoName,
+                    productPhoto.getInputStream()
+            );
+            product.setPhotoFileName(photoName);
             productService.updateProduct(product);
 
             return product.getPhotoFileName();
         } catch (IOException exception) {
             throw new ProductPhotoUploadException(productPhoto.getProductId());
+        }
+    }
+
+    @Override
+    public PhotoDto getPhoto(Long id) {
+        try {
+            var product = productService.getProduct(id);
+
+            if (!product.hasPhoto()) {
+                throw new ProductPhotoNotFoundException(id);
+            }
+
+            byte[] photoBytes = fileUtils.read(
+                    photoUploadDirectoryPath,
+                    product.getPhotoFileName()
+            );
+
+            return new ProductPhotoDto(id, photoBytes, product.getPhotoFileExtension());
+        } catch (IOException exception) {
+            throw new ProductPhotoDownloadException(id);
         }
     }
 }
