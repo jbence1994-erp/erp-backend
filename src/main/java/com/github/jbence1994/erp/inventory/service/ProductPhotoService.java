@@ -11,18 +11,21 @@ import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploa
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductPhotoService implements PhotoService {
     private final ProductService productService;
     private final FileUtils fileUtils;
     private final FileValidator fileValidator;
 
-    private static final String PRODUCTS_SUBDIRECTORY_NAME = "products";
+    @Value("${photo_upload_directory_path.products}")
+    private String photoUploadDirectoryPath;
 
     @Override
     public String uploadPhoto(CreatePhotoDto photo) {
@@ -39,7 +42,7 @@ public class ProductPhotoService implements PhotoService {
 
             var photoName = photo.createFileName();
             fileUtils.store(
-                    getPhotoUploadsPath(),
+                    photoUploadDirectoryPath,
                     photoName,
                     productPhoto.getInputStream()
             );
@@ -58,7 +61,7 @@ public class ProductPhotoService implements PhotoService {
             var product = productService.getProduct(id);
 
             byte[] photoBytes = fileUtils.read(
-                    getPhotoUploadsPath(),
+                    photoUploadDirectoryPath,
                     product.getPhotoFileName()
             );
 
@@ -66,15 +69,5 @@ public class ProductPhotoService implements PhotoService {
         } catch (Exception exception) {
             throw new ProductPhotoNotFoundException(id);
         }
-    }
-
-    // FIXME: Move to environment variable and YAML config
-    private String getPhotoUploadsPath() {
-        return String.format(
-                "%s/%s/%s",
-                UPLOADS_DIRECTORY_NAME,
-                PHOTOS_SUBDIRECTORY_NAME,
-                PRODUCTS_SUBDIRECTORY_NAME
-        );
     }
 }
