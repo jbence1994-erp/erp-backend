@@ -4,16 +4,22 @@ import com.github.jbence1994.erp.identity.dto.UserProfileCurrentAndNewPassword;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.UserProfileCurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.model.UserProfile;
 import com.github.jbence1994.erp.identity.repository.UserProfileRepository;
 import com.github.jbence1994.erp.identity.util.PasswordManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static com.github.jbence1994.erp.identity.constant.UserProfileTestConstants.USER_PROFILE_1_EMAIL;
 import static com.github.jbence1994.erp.identity.constant.UserProfileTestConstants.USER_PROFILE_1_HASHED_NEW_PASSWORD;
 import static com.github.jbence1994.erp.identity.constant.UserProfileTestConstants.USER_PROFILE_1_HASHED_PASSWORD;
 import static com.github.jbence1994.erp.identity.constant.UserProfileTestConstants.USER_PROFILE_1_INVALID_PASSWORD;
@@ -44,7 +50,7 @@ class UserProfileServiceImplTests {
     private UserProfileServiceImpl userProfileService;
 
     @Test
-    public void getUserProfileTest_HappyPath() {
+    public void getUserProfileTest_ById_HappyPath() {
         when(userProfileRepository.findById(any())).thenReturn(Optional.of(userProfile1()));
 
         var result = assertDoesNotThrow(() -> userProfileService.getUserProfile(1L));
@@ -53,23 +59,69 @@ class UserProfileServiceImplTests {
         assertEquals(1L, result.getId());
     }
 
-    @Test
-    public void getUserProfileTest_UnhappyPath_UserProfileNotFoundByGivenId() {
-        when(userProfileRepository.findById(any())).thenReturn(Optional.empty());
+    private static Stream<Arguments> getUserProfileByIdUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "UserProfileNotFoundException - UserProfile not found by given id",
+                        Optional.empty()
+                ),
+                Arguments.of(
+                        "UserProfileNotFoundException - UserProfile is deleted",
+                        Optional.of(userProfile1IsDeleted())
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("getUserProfileByIdUnhappyPathParams")
+    public void getUserProfileTest_ById_UnhappyPaths(
+            String testCase,
+            Optional<UserProfile> userProfileOptional
+    ) {
+        when(userProfileRepository.findById(any())).thenReturn(userProfileOptional);
 
         assertThrows(
                 UserProfileNotFoundException.class,
                 () -> userProfileService.getUserProfile(1L)
         );
+
+        verify(userProfileRepository, never()).save(any());
     }
 
     @Test
-    public void getUserProfileTest_UnhappyPath_UserProfileNotFound() {
-        when(userProfileRepository.findById(any())).thenReturn(Optional.of(userProfile1IsDeleted()));
+    public void getUserProfileTest_ByEmail_HappyPath() {
+        when(userProfileRepository.findByEmail(any())).thenReturn(Optional.of(userProfile1()));
+
+        var result = assertDoesNotThrow(() -> userProfileService.getUserProfile(USER_PROFILE_1_EMAIL));
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+    }
+
+    private static Stream<Arguments> getUserProfileByEmailUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "UserProfileNotFoundException - UserProfile not found by given email",
+                        Optional.empty()
+                ),
+                Arguments.of(
+                        "UserProfileNotFoundException - UserProfile is deleted",
+                        Optional.of(userProfile1IsDeleted())
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("getUserProfileByEmailUnhappyPathParams")
+    public void getUserProfileTest_ByEmail_UnhappyPaths(
+            String testCase,
+            Optional<UserProfile> userProfileOptional
+    ) {
+        when(userProfileRepository.findByEmail(any())).thenReturn(userProfileOptional);
 
         assertThrows(
                 UserProfileNotFoundException.class,
-                () -> userProfileService.getUserProfile(1L)
+                () -> userProfileService.getUserProfile(USER_PROFILE_1_EMAIL)
         );
 
         verify(userProfileRepository, never()).save(any());
