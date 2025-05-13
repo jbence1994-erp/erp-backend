@@ -13,6 +13,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.stream.Stream;
 
@@ -28,10 +30,10 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PNG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.TXT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class FileValidatorImplTests {
 
     @Mock
@@ -47,7 +49,7 @@ class FileValidatorImplTests {
     public void setup() {
         when(createPhotoDto.isEmpty()).thenReturn(false);
 
-        lenient().when(fileExtensionsConfig.getAllowedFileExtensions()).thenReturn(ALLOWED_FILE_EXTENSIONS);
+        when(fileExtensionsConfig.getAllowedFileExtensions()).thenReturn(ALLOWED_FILE_EXTENSIONS);
     }
 
     private static Stream<Arguments> fileNameAndExtensionParams() {
