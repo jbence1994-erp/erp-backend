@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "erp.file-extensions-config.allowed-extensions",
+      "sourceType": "com.github.jbence1994.erp.common.config.FileExtensionsConfig",
+      "description": "Allowed file extensions for photo upload."
+    },
+    {
+      "name": "erp.photo-upload-directory-path.products",
+      "type": "java.lang.String",
+      "description": "Directory path where a product photo can be uploaded."
+    },
+    {
+      "name": "erp.photo-upload-directory-path.user_profiles",
+      "type": "java.lang.String",
+      "description": "Directory path where a user profile photo can be uploaded."
+    }
+  ]
+}
