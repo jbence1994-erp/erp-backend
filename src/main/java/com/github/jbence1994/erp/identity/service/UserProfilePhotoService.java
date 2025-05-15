@@ -64,7 +64,7 @@ public class UserProfilePhotoService implements PhotoService {
                 throw new UserProfilePhotoNotFoundException(id);
             }
 
-            byte[] photoBytes = fileUtils.read(
+            var photoBytes = fileUtils.read(
                     photoUploadDirectoryPath,
                     userProfile.getPhotoFileName()
             );

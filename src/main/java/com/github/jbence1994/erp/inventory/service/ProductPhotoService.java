@@ -64,7 +64,7 @@ public class ProductPhotoService implements PhotoService {
                 throw new ProductPhotoNotFoundException(id);
             }
 
-            byte[] photoBytes = fileUtils.read(
+            var photoBytes = fileUtils.read(
                     photoUploadDirectoryPath,
                     product.getPhotoFileName()
             );
