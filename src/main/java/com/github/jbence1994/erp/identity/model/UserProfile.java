@@ -6,17 +6,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.util.StringUtils;
 
 @Entity
 @Table(name = "user_profiles")
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
