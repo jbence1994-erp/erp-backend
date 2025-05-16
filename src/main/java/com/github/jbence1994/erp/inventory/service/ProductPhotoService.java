@@ -50,21 +50,21 @@ public class ProductPhotoService extends PhotoService<CreateProductPhotoDto, Pro
 
     @Override
     protected RuntimeException alreadyHasPhotoUploadedException(Long id) {
-        throw new ProductAlreadyHasPhotoUploadedException(id);
+        return new ProductAlreadyHasPhotoUploadedException(id);
     }
 
     @Override
     protected RuntimeException photoUploadException(Long id) {
-        throw new ProductPhotoUploadException(id);
+        return new ProductPhotoUploadException(id);
     }
 
     @Override
     protected RuntimeException photoDownloadException(Long id) {
-        throw new ProductPhotoDownloadException(id);
+        return new ProductPhotoDownloadException(id);
     }
 
     @Override
     protected RuntimeException photoNotFoundException(Long id) {
-        throw new ProductPhotoNotFoundException(id);
+        return new ProductPhotoNotFoundException(id);
     }
 }

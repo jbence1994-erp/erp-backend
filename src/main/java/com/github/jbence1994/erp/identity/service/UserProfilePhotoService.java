@@ -50,21 +50,21 @@ public class UserProfilePhotoService extends PhotoService<CreateUserProfilePhoto
 
     @Override
     protected RuntimeException alreadyHasPhotoUploadedException(Long id) {
-        throw new UserProfileAlreadyHasPhotoUploadedException(id);
+        return new UserProfileAlreadyHasPhotoUploadedException(id);
     }
 
     @Override
     protected RuntimeException photoUploadException(Long id) {
-        throw new UserProfilePhotoUploadException(id);
+        return new UserProfilePhotoUploadException(id);
     }
 
     @Override
     protected RuntimeException photoDownloadException(Long id) {
-        throw new UserProfilePhotoDownloadException(id);
+        return new UserProfilePhotoDownloadException(id);
     }
 
     @Override
     protected RuntimeException photoNotFoundException(Long id) {
-        throw new UserProfilePhotoNotFoundException(id);
+        return new UserProfilePhotoNotFoundException(id);
     }
 }
