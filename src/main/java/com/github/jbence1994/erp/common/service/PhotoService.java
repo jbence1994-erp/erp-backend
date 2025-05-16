@@ -2,9 +2,81 @@ package com.github.jbence1994.erp.common.service;
 
 import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
 import com.github.jbence1994.erp.common.dto.PhotoDto;
+import com.github.jbence1994.erp.common.model.PhotoEntity;
+import com.github.jbence1994.erp.common.util.FileUtils;
+import com.github.jbence1994.erp.common.validation.FileValidator;
+import lombok.RequiredArgsConstructor;
 
-public interface PhotoService {
-    String uploadPhoto(CreatePhotoDto photo);
+import java.io.IOException;
 
-    PhotoDto getPhoto(Long id);
+@RequiredArgsConstructor
+public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto, E extends PhotoEntity> {
+    protected final FileUtils fileUtils;
+    protected final FileValidator fileValidator;
+
+    protected String photoUploadDirectoryPath;
+
+    protected abstract E getEntity(Long id);
+
+    protected abstract void updateEntity(E entity);
+
+    protected abstract String createFileName(C createPhotoDto);
+
+    protected abstract D dto(Long id, byte[] photoBytes, String extension);
+
+    protected abstract RuntimeException alreadyHasPhotoUploadedException(Long id);
+
+    protected abstract RuntimeException photoUploadException(Long id);
+
+    protected abstract RuntimeException photoDownloadException(Long id);
+
+    protected abstract RuntimeException photoNotFoundException(Long id);
+
+    public String uploadPhoto(CreatePhotoDto photoDto) {
+        var createPhotoDto = (C) photoDto;
+        var entityId = createPhotoDto.getEntityId();
+
+        try {
+            fileValidator.validate(createPhotoDto);
+
+            var entity = getEntity(entityId);
+
+            if (entity.hasPhoto()) {
+                throw alreadyHasPhotoUploadedException(entityId);
+            }
+
+            String fileName = createFileName(createPhotoDto);
+            fileUtils.store(
+                    photoUploadDirectoryPath,
+                    fileName,
+                    createPhotoDto.getInputStream()
+            );
+
+            entity.setPhotoFileName(fileName);
+            updateEntity(entity);
+
+            return fileName;
+        } catch (IOException e) {
+            throw photoUploadException(entityId);
+        }
+    }
+
+    public D getPhoto(Long id) {
+        try {
+            var entity = getEntity(id);
+
+            if (!entity.hasPhoto()) {
+                throw photoNotFoundException(id);
+            }
+
+            byte[] photoBytes = fileUtils.read(
+                    photoUploadDirectoryPath,
+                    entity.getPhotoFileName()
+            );
+
+            return dto(id, photoBytes, entity.getPhotoFileExtension());
+        } catch (IOException e) {
+            throw photoDownloadException(id);
+        }
+    }
 }
