@@ -23,6 +23,8 @@ public abstract class CreatePhotoDto {
 
     private byte[] inputStreamBytes;
 
+    public abstract Long getEntityId();
+
     public InputStream getInputStream() {
         return new ByteArrayInputStream(inputStreamBytes);
     }

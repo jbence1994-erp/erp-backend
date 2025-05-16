@@ -25,7 +25,7 @@ class MultipartFileToCreateUserProfilePhotoDtoMapperTests {
     public void toDtoTest_HappyPath() throws IOException {
         var result = toProfilePhotoDtoMapper.toDto(1L, multipartFile());
 
-        assertEquals(1L, result.getUserProfileId());
+        assertEquals(1L, result.getEntityId());
         assertEquals(multipartFile().isEmpty(), result.isEmpty());
         assertEquals(multipartFile().getOriginalFilename(), result.getOriginalFilename());
         assertEquals(multipartFile().getSize(), result.getSize());

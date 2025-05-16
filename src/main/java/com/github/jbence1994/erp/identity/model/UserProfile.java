@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.identity.model;
 
+import com.github.jbence1994.erp.common.model.PhotoEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +16,7 @@ import org.springframework.util.StringUtils;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfile {
+public class UserProfile implements PhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,10 +33,22 @@ public class UserProfile {
 
     private boolean isDeleted;
 
+    @Override
     public boolean hasPhoto() {
         return photoFileName != null;
     }
 
+    @Override
+    public String getPhotoFileName() {
+        return photoFileName;
+    }
+
+    @Override
+    public void setPhotoFileName(String photoFileName) {
+        this.photoFileName = photoFileName;
+    }
+
+    @Override
     public String getPhotoFileExtension() {
         return StringUtils.getFilenameExtension(photoFileName);
     }

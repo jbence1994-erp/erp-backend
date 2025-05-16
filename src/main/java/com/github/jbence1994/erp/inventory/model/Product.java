@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.inventory.model;
 
+import com.github.jbence1994.erp.common.model.PhotoEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +20,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class Product implements PhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,10 +43,22 @@ public class Product {
 
     private String photoFileName;
 
+    @Override
     public boolean hasPhoto() {
         return photoFileName != null;
     }
 
+    @Override
+    public String getPhotoFileName() {
+        return photoFileName;
+    }
+
+    @Override
+    public void setPhotoFileName(String photoFileName) {
+        this.photoFileName = photoFileName;
+    }
+
+    @Override
     public String getPhotoFileExtension() {
         return StringUtils.getFilenameExtension(photoFileName);
     }

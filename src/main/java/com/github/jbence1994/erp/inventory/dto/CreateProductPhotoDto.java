@@ -1,9 +1,7 @@
 package com.github.jbence1994.erp.inventory.dto;
 
 import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
-import lombok.Getter;
 
-@Getter
 public class CreateProductPhotoDto extends CreatePhotoDto {
     private final Long productId;
 
@@ -17,5 +15,10 @@ public class CreateProductPhotoDto extends CreatePhotoDto {
     ) {
         super(isEmpty, originalFilename, size, contentType, inputStreamBytes);
         this.productId = productId;
+    }
+
+    @Override
+    public Long getEntityId() {
+        return productId;
     }
 }
