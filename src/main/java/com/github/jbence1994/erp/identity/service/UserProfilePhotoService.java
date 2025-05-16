@@ -44,7 +44,7 @@ public class UserProfilePhotoService extends PhotoService<CreateUserProfilePhoto
     }
 
     @Override
-    protected UserProfilePhotoDto toDto(Long id, byte[] photoBytes, String extension) {
+    protected UserProfilePhotoDto dto(Long id, byte[] photoBytes, String extension) {
         return new UserProfilePhotoDto(id, photoBytes, extension);
     }
 

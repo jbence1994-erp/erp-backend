@@ -44,7 +44,7 @@ public class ProductPhotoService extends PhotoService<CreateProductPhotoDto, Pro
     }
 
     @Override
-    protected ProductPhotoDto toDto(Long id, byte[] photoBytes, String extension) {
+    protected ProductPhotoDto dto(Long id, byte[] photoBytes, String extension) {
         return new ProductPhotoDto(id, photoBytes, extension);
     }
 

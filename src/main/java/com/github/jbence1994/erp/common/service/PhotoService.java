@@ -10,19 +10,19 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public abstract class PhotoService<CreateDto extends CreatePhotoDto, Dto extends PhotoDto, Entity extends PhotoEntity> {
+public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto, E extends PhotoEntity> {
     protected final FileUtils fileUtils;
     protected final FileValidator fileValidator;
 
     protected String photoUploadDirectoryPath;
 
-    protected abstract Entity getEntity(Long id);
+    protected abstract E getEntity(Long id);
 
-    protected abstract void updateEntity(Entity entity);
+    protected abstract void updateEntity(E entity);
 
-    protected abstract String createFileName(CreateDto createDto);
+    protected abstract String createFileName(C createPhotoDto);
 
-    protected abstract Dto toDto(Long id, byte[] photoBytes, String extension);
+    protected abstract D dto(Long id, byte[] photoBytes, String extension);
 
     protected abstract RuntimeException alreadyHasPhotoUploadedException(Long id);
 
@@ -33,11 +33,11 @@ public abstract class PhotoService<CreateDto extends CreatePhotoDto, Dto extends
     protected abstract RuntimeException photoNotFoundException(Long id);
 
     public String uploadPhoto(CreatePhotoDto photoDto) {
-        var createDto = (CreateDto) photoDto;
-        var entityId = createDto.getEntityId();
+        var createPhotoDto = (C) photoDto;
+        var entityId = createPhotoDto.getEntityId();
 
         try {
-            fileValidator.validate(createDto);
+            fileValidator.validate(createPhotoDto);
 
             var entity = getEntity(entityId);
 
@@ -45,11 +45,11 @@ public abstract class PhotoService<CreateDto extends CreatePhotoDto, Dto extends
                 throw alreadyHasPhotoUploadedException(entityId);
             }
 
-            String fileName = createFileName(createDto);
+            String fileName = createFileName(createPhotoDto);
             fileUtils.store(
                     photoUploadDirectoryPath,
                     fileName,
-                    createDto.getInputStream()
+                    createPhotoDto.getInputStream()
             );
 
             entity.setPhotoFileName(fileName);
@@ -61,7 +61,7 @@ public abstract class PhotoService<CreateDto extends CreatePhotoDto, Dto extends
         }
     }
 
-    public Dto getPhoto(Long id) {
+    public D getPhoto(Long id) {
         try {
             var entity = getEntity(id);
 
@@ -74,7 +74,7 @@ public abstract class PhotoService<CreateDto extends CreatePhotoDto, Dto extends
                     entity.getPhotoFileName()
             );
 
-            return toDto(id, photoBytes, entity.getPhotoFileExtension());
+            return dto(id, photoBytes, entity.getPhotoFileExtension());
         } catch (IOException e) {
             throw photoDownloadException(id);
         }
