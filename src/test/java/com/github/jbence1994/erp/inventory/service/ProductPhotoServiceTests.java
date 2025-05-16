@@ -95,7 +95,7 @@ class ProductPhotoServiceTests {
     }
 
     @Test
-    public void getPhotoTest_UnhappyPath_UserProfileHasNoPhoto() {
+    public void getPhotoTest_UnhappyPath_ProductHasNoPhoto() {
         when(productService.getProduct(any())).thenReturn(product1());
 
         assertThrows(

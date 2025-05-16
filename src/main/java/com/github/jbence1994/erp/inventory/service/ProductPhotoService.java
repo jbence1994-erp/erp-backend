@@ -1,7 +1,5 @@
 package com.github.jbence1994.erp.inventory.service;
 
-import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
-import com.github.jbence1994.erp.common.dto.PhotoDto;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
@@ -11,67 +9,62 @@ import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploa
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import lombok.RequiredArgsConstructor;
+import com.github.jbence1994.erp.inventory.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
-@RequiredArgsConstructor
-public class ProductPhotoService implements PhotoService {
+public class ProductPhotoService extends PhotoService<CreateProductPhotoDto, ProductPhotoDto, Product> {
     private final ProductService productService;
-    private final FileUtils fileUtils;
-    private final FileValidator fileValidator;
 
-    @Value("${erp.photo-upload-directory-path.products}")
-    private String photoUploadDirectoryPath;
-
-    @Override
-    public String uploadPhoto(CreatePhotoDto photo) {
-        var productPhoto = (CreateProductPhotoDto) photo;
-
-        try {
-            fileValidator.validate(productPhoto);
-
-            var product = productService.getProduct(productPhoto.getProductId());
-
-            if (product.hasPhoto()) {
-                throw new ProductAlreadyHasPhotoUploadedException(productPhoto.getProductId());
-            }
-
-            var photoName = photo.createFileName();
-            fileUtils.store(
-                    photoUploadDirectoryPath,
-                    photoName,
-                    productPhoto.getInputStream()
-            );
-            product.setPhotoFileName(photoName);
-            productService.updateProduct(product);
-
-            return product.getPhotoFileName();
-        } catch (IOException exception) {
-            throw new ProductPhotoUploadException(productPhoto.getProductId());
-        }
+    public ProductPhotoService(
+            @Value("${erp.photo-upload-directory-path.products}") final String photoUploadDirectoryPath,
+            final ProductService productService,
+            final FileUtils fileUtils,
+            final FileValidator fileValidator
+    ) {
+        super(fileUtils, fileValidator);
+        this.productService = productService;
+        this.photoUploadDirectoryPath = photoUploadDirectoryPath;
     }
 
     @Override
-    public PhotoDto getPhoto(Long id) {
-        try {
-            var product = productService.getProduct(id);
+    protected Product getEntity(Long id) {
+        return productService.getProduct(id);
+    }
 
-            if (!product.hasPhoto()) {
-                throw new ProductPhotoNotFoundException(id);
-            }
+    @Override
+    protected void updateEntity(Product product) {
+        productService.updateProduct(product);
+    }
 
-            var photoBytes = fileUtils.read(
-                    photoUploadDirectoryPath,
-                    product.getPhotoFileName()
-            );
+    @Override
+    protected String createFileName(CreateProductPhotoDto createProductPhotoDto) {
+        return createProductPhotoDto.createFileName();
+    }
 
-            return new ProductPhotoDto(id, photoBytes, product.getPhotoFileExtension());
-        } catch (IOException exception) {
-            throw new ProductPhotoDownloadException(id);
-        }
+    @Override
+    protected ProductPhotoDto dto(Long id, byte[] photoBytes, String extension) {
+        return new ProductPhotoDto(id, photoBytes, extension);
+    }
+
+    @Override
+    protected RuntimeException alreadyHasPhotoUploadedException(Long id) {
+        return new ProductAlreadyHasPhotoUploadedException(id);
+    }
+
+    @Override
+    protected RuntimeException photoUploadException(Long id) {
+        return new ProductPhotoUploadException(id);
+    }
+
+    @Override
+    protected RuntimeException photoDownloadException(Long id) {
+        return new ProductPhotoDownloadException(id);
+    }
+
+    @Override
+    protected RuntimeException photoNotFoundException(Long id) {
+        return new ProductPhotoNotFoundException(id);
     }
 }
