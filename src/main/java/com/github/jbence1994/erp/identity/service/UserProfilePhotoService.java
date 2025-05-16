@@ -1,7 +1,5 @@
 package com.github.jbence1994.erp.identity.service;
 
-import com.github.jbence1994.erp.common.dto.CreatePhotoDto;
-import com.github.jbence1994.erp.common.dto.PhotoDto;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
@@ -11,67 +9,62 @@ import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUp
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
-import lombok.RequiredArgsConstructor;
+import com.github.jbence1994.erp.identity.model.UserProfile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
-@RequiredArgsConstructor
-public class UserProfilePhotoService implements PhotoService {
+public class UserProfilePhotoService extends PhotoService<CreateUserProfilePhotoDto, UserProfilePhotoDto, UserProfile> {
     private final UserProfileService userProfileService;
-    private final FileUtils fileUtils;
-    private final FileValidator fileValidator;
 
-    @Value("${erp.photo-upload-directory-path.user-profiles}")
-    private String photoUploadDirectoryPath;
-
-    @Override
-    public String uploadPhoto(CreatePhotoDto photo) {
-        var userProfilePhoto = (CreateUserProfilePhotoDto) photo;
-
-        try {
-            fileValidator.validate(userProfilePhoto);
-
-            var userProfile = userProfileService.getUserProfile(userProfilePhoto.getUserProfileId());
-
-            if (userProfile.hasPhoto()) {
-                throw new UserProfileAlreadyHasPhotoUploadedException(userProfilePhoto.getUserProfileId());
-            }
-
-            var photoName = userProfilePhoto.createFileName();
-            fileUtils.store(
-                    photoUploadDirectoryPath,
-                    photoName,
-                    userProfilePhoto.getInputStream()
-            );
-            userProfile.setPhotoFileName(photoName);
-            userProfileService.updateUserProfile(userProfile);
-
-            return userProfile.getPhotoFileName();
-        } catch (IOException exception) {
-            throw new UserProfilePhotoUploadException(userProfilePhoto.getUserProfileId());
-        }
+    public UserProfilePhotoService(
+            @Value("${erp.photo-upload-directory-path.user-profiles}") final String photoUploadDirectoryPath,
+            final FileUtils fileUtils,
+            final UserProfileService userProfileService,
+            final FileValidator fileValidator
+    ) {
+        super(fileUtils, fileValidator);
+        this.userProfileService = userProfileService;
+        this.photoUploadDirectoryPath = photoUploadDirectoryPath;
     }
 
     @Override
-    public PhotoDto getPhoto(Long id) {
-        try {
-            var userProfile = userProfileService.getUserProfile(id);
+    protected UserProfile getEntity(Long id) {
+        return userProfileService.getUserProfile(id);
+    }
 
-            if (!userProfile.hasPhoto()) {
-                throw new UserProfilePhotoNotFoundException(id);
-            }
+    @Override
+    protected void updateEntity(UserProfile userProfile) {
+        userProfileService.updateUserProfile(userProfile);
+    }
 
-            var photoBytes = fileUtils.read(
-                    photoUploadDirectoryPath,
-                    userProfile.getPhotoFileName()
-            );
+    @Override
+    protected String createFileName(CreateUserProfilePhotoDto createUserProfilePhotoDto) {
+        return createUserProfilePhotoDto.createFileName();
+    }
 
-            return new UserProfilePhotoDto(id, photoBytes, userProfile.getPhotoFileExtension());
-        } catch (IOException exception) {
-            throw new UserProfilePhotoDownloadException(id);
-        }
+    @Override
+    protected UserProfilePhotoDto toDto(Long id, byte[] photoBytes, String extension) {
+        return new UserProfilePhotoDto(id, photoBytes, extension);
+    }
+
+    @Override
+    protected RuntimeException alreadyHasPhotoUploadedException(Long id) {
+        throw new UserProfileAlreadyHasPhotoUploadedException(id);
+    }
+
+    @Override
+    protected RuntimeException photoUploadException(Long id) {
+        throw new UserProfilePhotoUploadException(id);
+    }
+
+    @Override
+    protected RuntimeException photoDownloadException(Long id) {
+        throw new UserProfilePhotoDownloadException(id);
+    }
+
+    @Override
+    protected RuntimeException photoNotFoundException(Long id) {
+        throw new UserProfilePhotoNotFoundException(id);
     }
 }
