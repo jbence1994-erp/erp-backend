@@ -1,6 +1,7 @@
 package com.github.jbence1994.erp.inventory.model;
 
 import com.github.jbence1994.erp.common.model.PhotoEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,7 +37,7 @@ public class Product extends PhotoEntity {
 
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
