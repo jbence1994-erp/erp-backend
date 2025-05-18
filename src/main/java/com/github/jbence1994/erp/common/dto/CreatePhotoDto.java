@@ -2,7 +2,6 @@ package com.github.jbence1994.erp.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Accessors;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -12,7 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 public abstract class CreatePhotoDto {
-    @Accessors(fluent = true)
     private boolean isEmpty;
 
     private String originalFilename;
