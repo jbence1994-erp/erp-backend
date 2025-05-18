@@ -28,7 +28,7 @@ public abstract class CreatePhotoDto {
     }
 
     public String createFileName() {
-        return String.format("%s.%s", UUID.randomUUID(), StringUtils.getFilenameExtension(originalFilename));
+        return String.format("%s.%s", UUID.randomUUID(), getFileExtension());
     }
 
     public String getFileExtension() {
