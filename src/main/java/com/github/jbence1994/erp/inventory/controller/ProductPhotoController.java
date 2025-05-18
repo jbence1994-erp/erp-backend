@@ -6,12 +6,14 @@ import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
+import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.github.jbence1994.erp.inventory.model.Product;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,17 +30,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/products/{productId}/photo")
 @CrossOrigin
+@AllArgsConstructor
 public class ProductPhotoController {
-    private final PhotoService photoService;
+    private final PhotoService<CreateProductPhotoDto, ProductPhotoDto, Product> photoService;
     private final MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper;
-
-    public ProductPhotoController(
-            @Qualifier("productPhotoService") PhotoService photoService,
-            MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper
-    ) {
-        this.photoService = photoService;
-        this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
-    }
 
     @PostMapping
     public ResponseEntity<?> uploadProductPhoto(

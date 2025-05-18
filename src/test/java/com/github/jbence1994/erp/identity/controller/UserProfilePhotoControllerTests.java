@@ -4,13 +4,15 @@ import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
+import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
+import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
-import com.github.jbence1994.erp.identity.service.UserProfilePhotoService;
+import com.github.jbence1994.erp.identity.model.UserProfile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +44,7 @@ import static org.mockito.Mockito.when;
 class UserProfilePhotoControllerTests {
 
     @Mock
-    private UserProfilePhotoService userProfilePhotoService;
+    private PhotoService<CreateUserProfilePhotoDto, UserProfilePhotoDto, UserProfile> photoService;
 
     @Mock
     private MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper;
@@ -52,7 +54,7 @@ class UserProfilePhotoControllerTests {
 
     @Test
     public void uploadUserProfilePhotoTest_HappyPath() {
-        when(userProfilePhotoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
+        when(photoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
 
         var result = userProfilePhotoController.uploadUserProfilePhoto(1L, multipartFile());
 
@@ -115,7 +117,7 @@ class UserProfilePhotoControllerTests {
             HttpStatus httpStatus,
             String exceptionMessage
     ) {
-        when(userProfilePhotoService.uploadPhoto(any())).thenThrow(exception);
+        when(photoService.uploadPhoto(any())).thenThrow(exception);
 
         var result = userProfilePhotoController.uploadUserProfilePhoto(userProfileId, multipartFile);
 
@@ -125,7 +127,7 @@ class UserProfilePhotoControllerTests {
 
     @Test
     public void getUserProfilePhotoTest_HappyPath() {
-        when(userProfilePhotoService.getPhoto(any())).thenReturn(userProfilePhotoDto());
+        when(photoService.getPhoto(any())).thenReturn(userProfilePhotoDto());
 
         var result = userProfilePhotoController.getUserProfilePhoto(1L);
 
@@ -171,7 +173,7 @@ class UserProfilePhotoControllerTests {
             String exceptionMessage
 
     ) {
-        when(userProfilePhotoService.getPhoto(any())).thenThrow(exception);
+        when(photoService.getPhoto(any())).thenThrow(exception);
 
         var result = userProfilePhotoController.getUserProfilePhoto(userProfileId);
 

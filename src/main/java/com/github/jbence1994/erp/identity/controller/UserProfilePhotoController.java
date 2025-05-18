@@ -6,12 +6,14 @@ import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
+import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.github.jbence1994.erp.identity.model.UserProfile;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,17 +30,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/userProfiles/{userProfileId}/photo")
 @CrossOrigin
+@AllArgsConstructor
 public class UserProfilePhotoController {
-    private final PhotoService photoService;
+    private final PhotoService<CreateUserProfilePhotoDto, UserProfilePhotoDto, UserProfile> photoService;
     private final MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper;
-
-    public UserProfilePhotoController(
-            @Qualifier("userProfilePhotoService") PhotoService photoService,
-            MultipartFileToCreatePhotoDtoMapper<CreateUserProfilePhotoDto> toCreatePhotoDtoMapper
-    ) {
-        this.photoService = photoService;
-        this.toCreatePhotoDtoMapper = toCreatePhotoDtoMapper;
-    }
 
     @PostMapping
     public ResponseEntity<?> uploadUserProfilePhoto(
