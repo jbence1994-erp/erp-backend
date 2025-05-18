@@ -1,11 +1,17 @@
 package com.github.jbence1994.erp.common.model;
 
-public interface PhotoEntity {
-    boolean hasPhoto();
+import org.springframework.util.StringUtils;
 
-    String getPhotoFileName();
+public abstract class PhotoEntity {
+    public abstract String getPhotoFileName();
 
-    void setPhotoFileName(String fileName);
+    public abstract void setPhotoFileName(String fileName);
 
-    String getPhotoFileExtension();
+    public boolean hasPhoto() {
+        return getPhotoFileName() != null;
+    }
+
+    public String getPhotoFileExtension() {
+        return StringUtils.getFilenameExtension(getPhotoFileName());
+    }
 }

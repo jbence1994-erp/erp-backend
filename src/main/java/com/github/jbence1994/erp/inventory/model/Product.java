@@ -9,18 +9,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product implements PhotoEntity {
+@Getter
+@Setter
+public class Product extends PhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,11 +45,6 @@ public class Product implements PhotoEntity {
     private String photoFileName;
 
     @Override
-    public boolean hasPhoto() {
-        return photoFileName != null;
-    }
-
-    @Override
     public String getPhotoFileName() {
         return photoFileName;
     }
@@ -56,10 +52,5 @@ public class Product implements PhotoEntity {
     @Override
     public void setPhotoFileName(String photoFileName) {
         this.photoFileName = photoFileName;
-    }
-
-    @Override
-    public String getPhotoFileExtension() {
-        return StringUtils.getFilenameExtension(photoFileName);
     }
 }
