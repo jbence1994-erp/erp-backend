@@ -68,7 +68,18 @@ class ProductServiceImplTests {
 
         var result = productService.createProduct(product1());
 
-        assertEquals(product1(), result);
+        assertEquals(product1().getId(), result.getId());
+        assertEquals(product1().getName(), result.getName());
+        assertEquals(product1().getSerialNumber(), result.getSerialNumber());
+        assertEquals(product1().getPrice(), result.getPrice());
+        assertEquals(product1().getUnit(), result.getUnit());
+        assertEquals(product1().getDescription(), result.getDescription());
+        assertEquals(product1().getSupplier().getId(), result.getSupplier().getId());
+        assertEquals(product1().getSupplier().getName(), result.getSupplier().getName());
+        assertEquals(product1().getSupplier().getPhone(), result.getSupplier().getPhone());
+        assertEquals(product1().getSupplier().getEmail(), result.getSupplier().getEmail());
+        assertEquals(product1().getOnStock(), result.getOnStock());
+        assertEquals(product1().getPhotoFileName(), result.getPhotoFileName());
     }
 
     @Test
