@@ -7,16 +7,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
+import lombok.Setter;
 
 @Entity
 @Table(name = "user_profiles")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfile implements PhotoEntity {
+@Getter
+@Setter
+public class UserProfile extends PhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,11 +35,6 @@ public class UserProfile implements PhotoEntity {
     private boolean isDeleted;
 
     @Override
-    public boolean hasPhoto() {
-        return photoFileName != null;
-    }
-
-    @Override
     public String getPhotoFileName() {
         return photoFileName;
     }
@@ -46,10 +42,5 @@ public class UserProfile implements PhotoEntity {
     @Override
     public void setPhotoFileName(String photoFileName) {
         this.photoFileName = photoFileName;
-    }
-
-    @Override
-    public String getPhotoFileExtension() {
-        return StringUtils.getFilenameExtension(photoFileName);
     }
 }

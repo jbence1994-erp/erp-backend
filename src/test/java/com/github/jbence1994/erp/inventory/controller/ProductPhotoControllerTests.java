@@ -4,13 +4,15 @@ import com.github.jbence1994.erp.common.dto.PhotoResponse;
 import com.github.jbence1994.erp.common.exception.EmptyFileException;
 import com.github.jbence1994.erp.common.exception.InvalidFileExtensionException;
 import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapper;
+import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
+import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
-import com.github.jbence1994.erp.inventory.service.ProductPhotoService;
+import com.github.jbence1994.erp.inventory.model.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,7 +44,7 @@ import static org.mockito.Mockito.when;
 class ProductPhotoControllerTests {
 
     @Mock
-    private ProductPhotoService productPhotoService;
+    private PhotoService<CreateProductPhotoDto, ProductPhotoDto, Product> photoService;
 
     @Mock
     private MultipartFileToCreatePhotoDtoMapper<CreateProductPhotoDto> toCreatePhotoDtoMapper;
@@ -52,7 +54,7 @@ class ProductPhotoControllerTests {
 
     @Test
     public void uploadProductPhotoTest_HappyPath() {
-        when(productPhotoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
+        when(photoService.uploadPhoto(any())).thenReturn(PHOTO_FILE_NAME);
 
         var result = productPhotoController.uploadProductPhoto(1L, multipartFile());
 
@@ -115,7 +117,7 @@ class ProductPhotoControllerTests {
             HttpStatus httpStatus,
             String exceptionMessage
     ) {
-        when(productPhotoService.uploadPhoto(any())).thenThrow(exception);
+        when(photoService.uploadPhoto(any())).thenThrow(exception);
 
         var result = productPhotoController.uploadProductPhoto(productId, multipartFile);
 
@@ -125,7 +127,7 @@ class ProductPhotoControllerTests {
 
     @Test
     public void getProductPhotoTest_HappyPath() {
-        when(productPhotoService.getPhoto(any())).thenReturn(productPhotoDto());
+        when(photoService.getPhoto(any())).thenReturn(productPhotoDto());
 
         var result = productPhotoController.getProductPhoto(1L);
 
@@ -170,7 +172,7 @@ class ProductPhotoControllerTests {
             HttpStatus httpStatus,
             String exceptionMessage
     ) {
-        when(productPhotoService.getPhoto(any())).thenThrow(exception);
+        when(photoService.getPhoto(any())).thenThrow(exception);
 
         var result = productPhotoController.getProductPhoto(productId);
 
