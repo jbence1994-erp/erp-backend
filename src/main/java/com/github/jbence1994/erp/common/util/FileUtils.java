@@ -7,4 +7,6 @@ public interface FileUtils {
     void store(String path, String fileName, InputStream stream) throws IOException;
 
     byte[] read(String path, String fileName) throws IOException;
+
+    void delete(String path, String fileName) throws IOException;
 }
