@@ -46,7 +46,11 @@ public class UserProfile extends PhotoEntity {
         password = newPassword;
     }
 
-    public void deleteProfile() {
+    public void delete() {
         isDeleted = true;
+    }
+
+    public void restore() {
+        isDeleted = false;
     }
 }
