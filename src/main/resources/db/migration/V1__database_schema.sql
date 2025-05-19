@@ -37,5 +37,6 @@ CREATE TABLE IF NOT EXISTS user_profiles
     email           VARCHAR(75)  NOT NULL,
     password        VARCHAR(255) NOT NULL,
     photo_file_name VARCHAR(41),
+    role            VARCHAR(15)  NOT NULL,
     is_deleted      TINYINT      NOT NULL DEFAULT 0
 );
