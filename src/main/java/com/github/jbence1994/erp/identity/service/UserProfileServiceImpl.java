@@ -23,6 +23,11 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElseThrow(() -> new UserProfileNotFoundException(id));
     }
 
+    public UserProfile getDeletedUserProfile(Long id) {
+        return userProfileRepository.findById(id)
+                .orElseThrow(() -> new UserProfileNotFoundException(id));
+    }
+
     @Override
     public UserProfile createUserProfile(UserProfile userProfile) {
         var userProfileId = userProfile.getId();
@@ -59,11 +64,20 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public void deleteUserProfile(Long id) {
-        var userProfileToDelete = getUserProfile(id);
+        var userProfile = getUserProfile(id);
 
-        userProfileToDelete.deleteProfile();
+        userProfile.delete();
 
-        userProfileRepository.save(userProfileToDelete);
+        userProfileRepository.save(userProfile);
+    }
+
+    @Override
+    public void restoreUserProfile(Long id) {
+        var userProfile = getDeletedUserProfile(id);
+
+        userProfile.restore();
+
+        userProfileRepository.save(userProfile);
     }
 
     private boolean isUserProfileAlreadyExists(Long userId) {
