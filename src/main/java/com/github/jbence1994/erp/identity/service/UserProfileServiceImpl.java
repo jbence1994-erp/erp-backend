@@ -1,7 +1,6 @@
 package com.github.jbence1994.erp.identity.service;
 
 import com.github.jbence1994.erp.identity.dto.UserProfileCurrentAndNewPassword;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.UserProfileCurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.model.UserProfile;
@@ -30,12 +29,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public UserProfile createUserProfile(UserProfile userProfile) {
-        var userProfileId = userProfile.getId();
-
-        if (isUserProfileAlreadyExists(userProfile.getId())) {
-            throw new UserProfileAlreadyExistException(userProfileId);
-        }
-
         userProfile.updatePassword(passwordManager.encode(userProfile.getPassword()));
 
         return userProfileRepository.save(userProfile);
@@ -78,9 +71,5 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfile.restore();
 
         userProfileRepository.save(userProfile);
-    }
-
-    private boolean isUserProfileAlreadyExists(Long userId) {
-        return userProfileRepository.findById(userId).isPresent();
     }
 }
