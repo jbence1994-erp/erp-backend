@@ -9,14 +9,12 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "user_profiles")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 public class UserProfile extends PhotoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +40,13 @@ public class UserProfile extends PhotoEntity {
     @Override
     public void setPhotoFileName(String photoFileName) {
         this.photoFileName = photoFileName;
+    }
+
+    public void updatePassword(String newPassword) {
+        password = newPassword;
+    }
+
+    public void deleteProfile() {
+        isDeleted = true;
     }
 }

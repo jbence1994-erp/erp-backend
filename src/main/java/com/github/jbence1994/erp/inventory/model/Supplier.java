@@ -7,13 +7,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "suppliers")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

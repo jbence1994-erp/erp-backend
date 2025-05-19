@@ -31,7 +31,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new UserProfileAlreadyExistException(userProfileId);
         }
 
-        userProfile.setPassword(passwordManager.encode(userProfile.getPassword()));
+        userProfile.updatePassword(passwordManager.encode(userProfile.getPassword()));
 
         return userProfileRepository.save(userProfile);
     }
@@ -52,7 +52,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new UserProfileCurrentPasswordAndPasswordNotMatchingException();
         }
 
-        userProfileToUpdate.setPassword(passwordManager.encode(userProfileNewPassword));
+        userProfileToUpdate.updatePassword(passwordManager.encode(userProfileNewPassword));
 
         userProfileRepository.save(userProfileToUpdate);
     }
@@ -61,7 +61,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     public void deleteUserProfile(Long id) {
         var userProfileToDelete = getUserProfile(id);
 
-        userProfileToDelete.setDeleted(true);
+        userProfileToDelete.deleteProfile();
 
         userProfileRepository.save(userProfileToDelete);
     }
