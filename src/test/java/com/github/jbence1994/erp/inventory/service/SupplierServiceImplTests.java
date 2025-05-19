@@ -29,7 +29,10 @@ class SupplierServiceImplTests {
 
         var result = supplierService.createSupplier(supplier1());
 
-        assertEquals(supplier1(), result);
+        assertEquals(supplier1().getId(), result.getId());
+        assertEquals(supplier1().getName(), result.getName());
+        assertEquals(supplier1().getPhone(), result.getPhone());
+        assertEquals(supplier1().getEmail(), result.getEmail());
     }
 
     @Test
