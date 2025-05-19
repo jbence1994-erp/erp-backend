@@ -180,4 +180,24 @@ class UserProfileServiceImplTests {
 
         verify(userProfileRepository, never()).save(any());
     }
+
+    @Test
+    public void restoreUserProfileTest_HappyPath() {
+        when(userProfileRepository.findById(any())).thenReturn(Optional.of(userProfile1IsDeleted()));
+        when(userProfileRepository.save(any())).thenReturn(userProfile1());
+
+        assertDoesNotThrow(() -> userProfileService.restoreUserProfile(1L));
+
+        verify(userProfileRepository, times(1)).save(any());
+    }
+
+    @Test
+    public void restoreUserProfileTest_UnhappyPath_UserProfileNotFoundByGivenId() {
+        when(userProfileRepository.findById(any())).thenReturn(Optional.empty());
+
+        assertThrows(
+                UserProfileNotFoundException.class,
+                () -> userProfileService.restoreUserProfile(1L)
+        );
+    }
 }
