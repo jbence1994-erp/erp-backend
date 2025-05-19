@@ -15,4 +15,6 @@ public interface UserProfileService {
     void updateUserProfilePassword(Long id, UserProfileCurrentAndNewPassword userProfileCurrentAndNewPassword);
 
     void deleteUserProfile(Long id);
+
+    void restoreUserProfile(Long id);
 }

@@ -23,6 +23,11 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElseThrow(() -> new UserProfileNotFoundException(id));
     }
 
+    public UserProfile getDeletedUserProfile(Long id) {
+        return userProfileRepository.findById(id)
+                .orElseThrow(() -> new UserProfileNotFoundException(id));
+    }
+
     @Override
     public UserProfile getUserProfile(String email) {
         return userProfileRepository.findByEmail(email)
@@ -38,7 +43,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new UserProfileAlreadyExistException(userProfileId);
         }
 
-        userProfile.setPassword(passwordManager.encode(userProfile.getPassword()));
+        userProfile.updatePassword(passwordManager.encode(userProfile.getPassword()));
 
         return userProfileRepository.save(userProfile);
     }
@@ -59,18 +64,27 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw new UserProfileCurrentPasswordAndPasswordNotMatchingException();
         }
 
-        userProfileToUpdate.setPassword(passwordManager.encode(userProfileNewPassword));
+        userProfileToUpdate.updatePassword(passwordManager.encode(userProfileNewPassword));
 
         userProfileRepository.save(userProfileToUpdate);
     }
 
     @Override
     public void deleteUserProfile(Long id) {
-        var userProfileToDelete = getUserProfile(id);
+        var userProfile = getUserProfile(id);
 
-        userProfileToDelete.setDeleted(true);
+        userProfile.delete();
 
-        userProfileRepository.save(userProfileToDelete);
+        userProfileRepository.save(userProfile);
+    }
+
+    @Override
+    public void restoreUserProfile(Long id) {
+        var userProfile = getDeletedUserProfile(id);
+
+        userProfile.restore();
+
+        userProfileRepository.save(userProfile);
     }
 
     private boolean isUserProfileAlreadyExists(Long userId) {
