@@ -41,18 +41,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public void updateUserProfilePassword(Long id, UserProfileCurrentAndNewPassword userProfileCurrentAndNewPassword) {
-        var userProfileToUpdate = getUserProfile(id);
+        var userProfile = getUserProfile(id);
 
         var userProfileCurrentPassword = userProfileCurrentAndNewPassword.currentPassword();
         var userProfileNewPassword = userProfileCurrentAndNewPassword.newPassword();
 
-        if (!passwordManager.verify(userProfileCurrentPassword, userProfileToUpdate.getPassword())) {
+        if (!passwordManager.verify(userProfileCurrentPassword, userProfile.getPassword())) {
             throw new UserProfileCurrentPasswordAndPasswordNotMatchingException();
         }
 
-        userProfileToUpdate.updatePassword(passwordManager.encode(userProfileNewPassword));
+        userProfile.updatePassword(passwordManager.encode(userProfileNewPassword));
 
-        userProfileRepository.save(userProfileToUpdate);
+        userProfileRepository.save(userProfile);
     }
 
     @Override
