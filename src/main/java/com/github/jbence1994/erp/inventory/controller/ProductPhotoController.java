@@ -9,6 +9,7 @@ import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,6 +89,21 @@ public class ProductPhotoController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         } catch (ProductPhotoDownloadException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(exception.getMessage());
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteProductPhoto(@PathVariable Long productId) {
+        try {
+            photoService.deletePhoto(productId);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (ProductPhotoDeleteException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());

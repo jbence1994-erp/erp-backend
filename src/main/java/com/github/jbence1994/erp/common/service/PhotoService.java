@@ -30,6 +30,8 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
 
     protected abstract RuntimeException photoDownloadException(Long id);
 
+    protected abstract RuntimeException photoDeleteException(Long id);
+
     protected abstract RuntimeException photoNotFoundException(Long id);
 
     public String uploadPhoto(CreatePhotoDto photoDto) {
@@ -56,7 +58,7 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
             updateEntity(entity);
 
             return fileName;
-        } catch (IOException e) {
+        } catch (IOException exception) {
             throw photoUploadException(entityId);
         }
     }
@@ -75,8 +77,21 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
             );
 
             return dto(id, photoBytes, entity.getPhotoFileExtension());
-        } catch (IOException e) {
+        } catch (IOException exception) {
             throw photoDownloadException(id);
+        }
+    }
+
+    public void deletePhoto(Long id) {
+        try {
+            var entity = getEntity(id);
+
+            fileUtils.delete(
+                    photoUploadDirectoryPath,
+                    entity.getPhotoFileName()
+            );
+        } catch (IOException exception) {
+            throw photoDeleteException(id);
         }
     }
 }
