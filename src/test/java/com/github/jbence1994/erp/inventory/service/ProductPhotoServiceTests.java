@@ -3,7 +3,9 @@ package com.github.jbence1994.erp.inventory.service;
 import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductDoesNotHaveAPhotoUploadedYetException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
@@ -21,6 +23,7 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
 import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1;
 import static com.github.jbence1994.erp.inventory.testobject.ProductTestObject.product1WithPhoto;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,9 +69,9 @@ class ProductPhotoServiceTests {
     }
 
     @Test
-    public void uploadPhotoTest_UnhappyPath_ProductAlreadyHasPhotoUploaded() {
+    public void uploadPhotoTest_UnhappyPath_ProductAlreadyHasAPhotoUploaded() {
         assertThrows(
-                ProductAlreadyHasPhotoUploadedException.class,
+                ProductAlreadyHasAPhotoUploadedException.class,
                 () -> productPhotoService.uploadPhoto(createProductPhotoDto)
         );
     }
@@ -111,6 +114,33 @@ class ProductPhotoServiceTests {
         assertThrows(
                 ProductPhotoDownloadException.class,
                 () -> productPhotoService.getPhoto(1L)
+        );
+    }
+
+    @Test
+    public void deletePhotoTest_HappyPath() throws IOException {
+        doNothing().when(fileUtils).delete(any(), any());
+
+        assertDoesNotThrow(() -> productPhotoService.deletePhoto(1L));
+    }
+
+    @Test
+    public void deletePhotoTest_UnhappyPath_ProductDoesNotHaveAPhotoUploadedYetException() {
+        when(productService.getProduct(any())).thenReturn(product1());
+
+        assertThrows(
+                ProductDoesNotHaveAPhotoUploadedYetException.class,
+                () -> productPhotoService.deletePhoto(1L)
+        );
+    }
+
+    @Test
+    public void deletePhotoTest_UnhappyPath_IOException() throws IOException {
+        doThrow(new IOException("Disk error")).when(fileUtils).delete(any(), any());
+
+        assertThrows(
+                ProductPhotoDeleteException.class,
+                () -> productPhotoService.deletePhoto(1L)
         );
     }
 }
