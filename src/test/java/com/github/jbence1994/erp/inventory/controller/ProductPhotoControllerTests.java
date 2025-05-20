@@ -9,6 +9,7 @@ import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
 import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -179,5 +182,25 @@ class ProductPhotoControllerTests {
         assertEquals(httpStatus, result.getStatusCode());
         assertNotNull(result.getBody());
         assertEquals(exceptionMessage, result.getBody().toString());
+    }
+
+    @Test
+    public void deleteProductPhotoTest_HappyPath() {
+        doNothing().when(photoService).deletePhoto(any());
+
+        var result = productPhotoController.deleteProductPhoto(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void deleteProductPhotoTest_UnhappyPath_HTTP_501() {
+        doThrow(new ProductPhotoDeleteException(1L)).when(photoService).deletePhoto(any());
+
+        var result = productPhotoController.deleteProductPhoto(1L);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals("Fénykép törlése az alábbi terméknél: #1 sikeretelen volt", result.getBody().toString());
     }
 }

@@ -9,6 +9,7 @@ import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
@@ -38,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -171,7 +174,6 @@ class UserProfilePhotoControllerTests {
             Long userProfileId,
             HttpStatus httpStatus,
             String exceptionMessage
-
     ) {
         when(photoService.getPhoto(any())).thenThrow(exception);
 
@@ -180,5 +182,25 @@ class UserProfilePhotoControllerTests {
         assertEquals(httpStatus, result.getStatusCode());
         assertNotNull(result.getBody());
         assertEquals(exceptionMessage, result.getBody().toString());
+    }
+
+    @Test
+    public void deleteProductPhotoTest_HappyPath() {
+        doNothing().when(photoService).deletePhoto(any());
+
+        var result = userProfilePhotoController.deleteUserProfilePhoto(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    @Test
+    public void deleteProductPhotoTest_UnhappyPath_HTTP_501() {
+        doThrow(new UserProfilePhotoDeleteException(1L)).when(photoService).deletePhoto(any());
+
+        var result = userProfilePhotoController.deleteUserProfilePhoto(1L);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals("Fénykép törlése az alábbi felhasználói fióknál: #1 sikeretelen volt", result.getBody().toString());
     }
 }

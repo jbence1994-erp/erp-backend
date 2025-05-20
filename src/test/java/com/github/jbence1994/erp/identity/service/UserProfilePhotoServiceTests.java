@@ -4,6 +4,7 @@ import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
@@ -21,6 +22,7 @@ import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.JPEG;
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
 import static com.github.jbence1994.erp.identity.testobject.UserProfileTestObject.userProfile1;
 import static com.github.jbence1994.erp.identity.testobject.UserProfileTestObject.userProfile1WithPhoto;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -111,6 +113,23 @@ class UserProfilePhotoServiceTests {
         assertThrows(
                 UserProfilePhotoDownloadException.class,
                 () -> userProfilePhotoService.getPhoto(1L)
+        );
+    }
+
+    @Test
+    public void deletePhotoTest_HappyPath() throws IOException {
+        doNothing().when(fileUtils).delete(any(), any());
+
+        assertDoesNotThrow(() -> userProfilePhotoService.deletePhoto(1L));
+    }
+
+    @Test
+    public void deletePhotoTest_UnhappyPath_IOException() throws IOException {
+        doThrow(new IOException("Disk error")).when(fileUtils).delete(any(), any());
+
+        assertThrows(
+                UserProfilePhotoDeleteException.class,
+                () -> userProfilePhotoService.deletePhoto(1L)
         );
     }
 }
