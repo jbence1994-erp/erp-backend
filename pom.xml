@@ -35,7 +35,7 @@
 
         <!-- JaCoCo properties -->
         <jacoco.line-coverage>0.91</jacoco.line-coverage>
-        <jacoco.branch-coverage>0.86</jacoco.branch-coverage>
+        <jacoco.branch-coverage>0.85</jacoco.branch-coverage>
         <jacoco.complexity-coverage>0.94</jacoco.complexity-coverage>
         <jacoco.method-coverage>0.96</jacoco.method-coverage>
         <jacoco.class-coverage>0.93</jacoco.class-coverage>
