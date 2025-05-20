@@ -127,7 +127,7 @@ class UserProfilePhotoServiceTests {
 
     @Test
     public void deletePhotoTest_UnhappyPath_UserProfileDoesNotHaveAPhotoUploadedYetException() {
-        when(userProfileService.getUserProfile(any())).thenReturn(userProfile1());
+        when(userProfileService.getUserProfile(anyLong())).thenReturn(userProfile1());
 
         assertThrows(
                 UserProfileDoesNotHaveAPhotoUploadedYetException.class,
