@@ -1,7 +1,6 @@
 package com.github.jbence1994.erp.identity.service;
 
 import com.github.jbence1994.erp.identity.dto.UserProfileCurrentAndNewPassword;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.UserProfileCurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.model.UserProfile;
@@ -129,7 +128,6 @@ class UserProfileServiceImplTests {
 
     @Test
     public void createUserProfileTest_HappyPath() {
-        when(userProfileRepository.findById(any())).thenReturn(Optional.empty());
         when(passwordManager.encode(any())).thenReturn(USER_PROFILE_1_HASHED_PASSWORD);
         when(userProfileRepository.save(any())).thenReturn(userProfile1());
 
@@ -143,16 +141,6 @@ class UserProfileServiceImplTests {
         assertEquals(userProfile1().getPassword(), result.getPassword());
         assertEquals(userProfile1().getPhotoFileName(), result.getPhotoFileName());
         assertEquals(userProfile1().isDeleted(), result.isDeleted());
-    }
-
-    @Test
-    public void createUserProfileTest_UnhappyPath_UserProfileAlreadyBeenCreatedForGivenUser() {
-        when(userProfileRepository.findById(any())).thenReturn(Optional.of(userProfile1()));
-
-        assertThrows(
-                UserProfileAlreadyExistException.class,
-                () -> userProfileService.createUserProfile(userProfile1())
-        );
     }
 
     @Test

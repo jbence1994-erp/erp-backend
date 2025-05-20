@@ -1,7 +1,6 @@
 package com.github.jbence1994.erp.identity.service;
 
 import com.github.jbence1994.erp.identity.dto.UserProfileCurrentAndNewPassword;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyExistException;
 import com.github.jbence1994.erp.identity.exception.UserProfileCurrentPasswordAndPasswordNotMatchingException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.model.UserProfile;
@@ -37,12 +36,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public UserProfile createUserProfile(UserProfile userProfile) {
-        var userProfileId = userProfile.getId();
-
-        if (isUserProfileAlreadyExists(userProfile.getId())) {
-            throw new UserProfileAlreadyExistException(userProfileId);
-        }
-
         userProfile.updatePassword(passwordManager.encode(userProfile.getPassword()));
 
         return userProfileRepository.save(userProfile);
@@ -55,18 +48,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public void updateUserProfilePassword(Long id, UserProfileCurrentAndNewPassword userProfileCurrentAndNewPassword) {
-        var userProfileToUpdate = getUserProfile(id);
+        var userProfile = getUserProfile(id);
 
         var userProfileCurrentPassword = userProfileCurrentAndNewPassword.currentPassword();
         var userProfileNewPassword = userProfileCurrentAndNewPassword.newPassword();
 
-        if (!passwordManager.verify(userProfileCurrentPassword, userProfileToUpdate.getPassword())) {
+        if (!passwordManager.verify(userProfileCurrentPassword, userProfile.getPassword())) {
             throw new UserProfileCurrentPasswordAndPasswordNotMatchingException();
         }
 
-        userProfileToUpdate.updatePassword(passwordManager.encode(userProfileNewPassword));
+        userProfile.updatePassword(passwordManager.encode(userProfileNewPassword));
 
-        userProfileRepository.save(userProfileToUpdate);
+        userProfileRepository.save(userProfile);
     }
 
     @Override
@@ -85,9 +78,5 @@ public class UserProfileServiceImpl implements UserProfileService {
         userProfile.restore();
 
         userProfileRepository.save(userProfile);
-    }
-
-    private boolean isUserProfileAlreadyExists(Long userId) {
-        return userProfileRepository.findById(userId).isPresent();
     }
 }
