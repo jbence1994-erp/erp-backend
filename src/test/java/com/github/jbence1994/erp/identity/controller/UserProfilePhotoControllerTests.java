@@ -194,7 +194,7 @@ class UserProfilePhotoControllerTests {
     }
 
     @Test
-    public void deleteProductPhotoTest_UnhappyPath_HTTP_501() {
+    public void deleteProductPhotoTest_UnhappyPath_HTTP_500() {
         doThrow(new UserProfilePhotoDeleteException(1L)).when(photoService).deletePhoto(any());
 
         var result = userProfilePhotoController.deleteUserProfilePhoto(1L);
