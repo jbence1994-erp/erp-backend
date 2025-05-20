@@ -7,8 +7,10 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
@@ -19,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,7 +58,7 @@ public class UserProfilePhotoController {
         } catch (
                 EmptyFileException |
                 InvalidFileExtensionException |
-                UserProfileAlreadyHasPhotoUploadedException exception
+                UserProfileAlreadyHasAPhotoUploadedException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -87,6 +90,25 @@ public class UserProfilePhotoController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(exception.getMessage());
         } catch (UserProfilePhotoDownloadException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(exception.getMessage());
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUserProfilePhoto(@PathVariable Long userProfileId) {
+        try {
+            photoService.deletePhoto(userProfileId);
+
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (UserProfileDoesNotHaveAPhotoUploadedYetException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(exception.getMessage());
+        } catch (UserProfilePhotoDeleteException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(exception.getMessage());

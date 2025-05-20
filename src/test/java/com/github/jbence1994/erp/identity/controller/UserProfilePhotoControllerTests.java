@@ -7,8 +7,10 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
+import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoUploadException;
@@ -38,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,8 +93,8 @@ class UserProfilePhotoControllerTests {
                         "Hibás fájlformátum: TXT"
                 ),
                 Arguments.of(
-                        "UserProfileAlreadyHasPhotoUploadedException - HTTP 400",
-                        new UserProfileAlreadyHasPhotoUploadedException(1L),
+                        "UserProfileAlreadyHasAPhotoUploadedException - HTTP 400",
+                        new UserProfileAlreadyHasAPhotoUploadedException(1L),
                         1L,
                         multipartFile(),
                         HttpStatus.BAD_REQUEST,
@@ -171,11 +175,56 @@ class UserProfilePhotoControllerTests {
             Long userProfileId,
             HttpStatus httpStatus,
             String exceptionMessage
-
     ) {
         when(photoService.getPhoto(any())).thenThrow(exception);
 
         var result = userProfilePhotoController.getUserProfilePhoto(userProfileId);
+
+        assertEquals(httpStatus, result.getStatusCode());
+        assertNotNull(result.getBody());
+        assertEquals(exceptionMessage, result.getBody().toString());
+    }
+
+    @Test
+    public void deleteUserProfilePhotoTest_HappyPath() {
+        doNothing().when(photoService).deletePhoto(any());
+
+        var result = userProfilePhotoController.deleteUserProfilePhoto(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+    }
+
+    static Stream<Arguments> deleteUserProfilePhotoUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "UserProfileDoesNotHaveAPhotoUploadedYetException - HTTP 400",
+                        new UserProfileDoesNotHaveAPhotoUploadedYetException(1L),
+                        1L,
+                        HttpStatus.BAD_REQUEST,
+                        "Felhasználói fiók a következő azonosítóval: #1 még nem rendelkezik feltöltött fényképpel"
+                ),
+                Arguments.of(
+                        "UserProfilePhotoDeleteException - HTTP 500",
+                        new UserProfilePhotoDeleteException(1L),
+                        1L,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Fénykép törlése az alábbi felhasználói fióknál: #1 sikeretelen volt"
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("deleteUserProfilePhotoUnhappyPathParams")
+    public void deleteUserProfilePhotoTest_UnhappyPaths(
+            String testCase,
+            Exception exception,
+            Long userProfileId,
+            HttpStatus httpStatus,
+            String exceptionMessage
+    ) {
+        doThrow(exception).when(photoService).deletePhoto(any());
+
+        var result = userProfilePhotoController.deleteUserProfilePhoto(userProfileId);
 
         assertEquals(httpStatus, result.getStatusCode());
         assertNotNull(result.getBody());

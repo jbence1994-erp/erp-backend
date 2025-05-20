@@ -26,4 +26,10 @@ public class FileSystemUtils implements FileUtils {
         var targetPath = Paths.get(path, fileName);
         return Files.readAllBytes(targetPath);
     }
+
+    @Override
+    public void delete(String path, String fileName) throws IOException {
+        var targetPath = Paths.get(path, fileName);
+        Files.delete(targetPath);
+    }
 }
