@@ -7,7 +7,8 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
@@ -92,8 +93,8 @@ class ProductPhotoControllerTests {
                         "Hibás fájlformátum: TXT"
                 ),
                 Arguments.of(
-                        "ProductAlreadyHasPhotoUploadedException - HTTP 400",
-                        new ProductAlreadyHasPhotoUploadedException(1L),
+                        "ProductAlreadyHasAPhotoUploadedException - HTTP 400",
+                        new ProductAlreadyHasAPhotoUploadedException(1L),
                         1L,
                         multipartFile(),
                         HttpStatus.BAD_REQUEST,
@@ -140,7 +141,7 @@ class ProductPhotoControllerTests {
         assertInstanceOf(byte[].class, result.getBody());
     }
 
-    static Stream<Arguments> getUserProfilePhotoUnhappyPathParams() {
+    static Stream<Arguments> getProductPhotoUnhappyPathParams() {
         return Stream.of(
                 Arguments.of(
                         "ProductNotFoundException - HTTP 400",
@@ -167,7 +168,7 @@ class ProductPhotoControllerTests {
     }
 
     @ParameterizedTest(name = "{index} => {0}")
-    @MethodSource("getUserProfilePhotoUnhappyPathParams")
+    @MethodSource("getProductPhotoUnhappyPathParams")
     public void getProductPhotoTest_UnhappyPaths(
             String testCase,
             Exception exception,
@@ -193,14 +194,40 @@ class ProductPhotoControllerTests {
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
     }
 
-    @Test
-    public void deleteProductPhotoTest_UnhappyPath_HTTP_500() {
-        doThrow(new ProductPhotoDeleteException(1L)).when(photoService).deletePhoto(any());
+    static Stream<Arguments> deleteProductPhotoUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "ProductDoesNotHaveAPhotoUploadedYetException - HTTP 400",
+                        new ProductDoesNotHaveAPhotoUploadedYetException(1L),
+                        1L,
+                        HttpStatus.BAD_REQUEST,
+                        "Termék a következő azonosítóval: #1 még nem rendelkezik feltöltött fényképpel"
+                ),
+                Arguments.of(
+                        "ProductPhotoDeleteException - HTTP 500",
+                        new ProductPhotoDeleteException(1L),
+                        1L,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Fénykép törlése az alábbi terméknél: #1 sikeretelen volt"
+                )
+        );
+    }
 
-        var result = productPhotoController.deleteProductPhoto(1L);
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("deleteProductPhotoUnhappyPathParams")
+    public void deleteProductPhotoTest_UnhappyPaths(
+            String testCase,
+            Exception exception,
+            Long productId,
+            HttpStatus httpStatus,
+            String exceptionMessage
+    ) {
+        doThrow(exception).when(photoService).deletePhoto(any());
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        var result = productPhotoController.deleteProductPhoto(productId);
+
+        assertEquals(httpStatus, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertEquals("Fénykép törlése az alábbi terméknél: #1 sikeretelen volt", result.getBody().toString());
+        assertEquals(exceptionMessage, result.getBody().toString());
     }
 }

@@ -7,7 +7,8 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
@@ -92,8 +93,8 @@ class UserProfilePhotoControllerTests {
                         "Hibás fájlformátum: TXT"
                 ),
                 Arguments.of(
-                        "UserProfileAlreadyHasPhotoUploadedException - HTTP 400",
-                        new UserProfileAlreadyHasPhotoUploadedException(1L),
+                        "UserProfileAlreadyHasAPhotoUploadedException - HTTP 400",
+                        new UserProfileAlreadyHasAPhotoUploadedException(1L),
                         1L,
                         multipartFile(),
                         HttpStatus.BAD_REQUEST,
@@ -185,7 +186,7 @@ class UserProfilePhotoControllerTests {
     }
 
     @Test
-    public void deleteProductPhotoTest_HappyPath() {
+    public void deleteUserProfilePhotoTest_HappyPath() {
         doNothing().when(photoService).deletePhoto(any());
 
         var result = userProfilePhotoController.deleteUserProfilePhoto(1L);
@@ -193,14 +194,40 @@ class UserProfilePhotoControllerTests {
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
     }
 
-    @Test
-    public void deleteProductPhotoTest_UnhappyPath_HTTP_500() {
-        doThrow(new UserProfilePhotoDeleteException(1L)).when(photoService).deletePhoto(any());
+    static Stream<Arguments> deleteUserProfilePhotoUnhappyPathParams() {
+        return Stream.of(
+                Arguments.of(
+                        "UserProfileDoesNotHaveAPhotoUploadedYetException - HTTP 400",
+                        new UserProfileDoesNotHaveAPhotoUploadedYetException(1L),
+                        1L,
+                        HttpStatus.BAD_REQUEST,
+                        "Felhasználói fiók a következő azonosítóval: #1 még nem rendelkezik feltöltött fényképpel"
+                ),
+                Arguments.of(
+                        "UserProfilePhotoDeleteException - HTTP 500",
+                        new UserProfilePhotoDeleteException(1L),
+                        1L,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Fénykép törlése az alábbi felhasználói fióknál: #1 sikeretelen volt"
+                )
+        );
+    }
 
-        var result = userProfilePhotoController.deleteUserProfilePhoto(1L);
+    @ParameterizedTest(name = "{index} => {0}")
+    @MethodSource("deleteUserProfilePhotoUnhappyPathParams")
+    public void deleteUserProfilePhotoTest_UnhappyPaths(
+            String testCase,
+            Exception exception,
+            Long userProfileId,
+            HttpStatus httpStatus,
+            String exceptionMessage
+    ) {
+        doThrow(exception).when(photoService).deletePhoto(any());
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        var result = userProfilePhotoController.deleteUserProfilePhoto(userProfileId);
+
+        assertEquals(httpStatus, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertEquals("Fénykép törlése az alábbi felhasználói fióknál: #1 sikeretelen volt", result.getBody().toString());
+        assertEquals(exceptionMessage, result.getBody().toString());
     }
 }

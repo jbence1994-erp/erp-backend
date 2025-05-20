@@ -7,7 +7,8 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.inventory.exception.ProductNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
@@ -57,7 +58,7 @@ public class ProductPhotoController {
         } catch (
                 EmptyFileException |
                 InvalidFileExtensionException |
-                ProductAlreadyHasPhotoUploadedException exception
+                ProductAlreadyHasAPhotoUploadedException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -103,6 +104,10 @@ public class ProductPhotoController {
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .build();
+        } catch (ProductDoesNotHaveAPhotoUploadedYetException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(exception.getMessage());
         } catch (ProductPhotoDeleteException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

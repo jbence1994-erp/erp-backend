@@ -3,7 +3,8 @@ package com.github.jbence1994.erp.inventory.service;
 import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
@@ -68,9 +69,9 @@ class ProductPhotoServiceTests {
     }
 
     @Test
-    public void uploadPhotoTest_UnhappyPath_ProductAlreadyHasPhotoUploaded() {
+    public void uploadPhotoTest_UnhappyPath_ProductAlreadyHasAPhotoUploaded() {
         assertThrows(
-                ProductAlreadyHasPhotoUploadedException.class,
+                ProductAlreadyHasAPhotoUploadedException.class,
                 () -> productPhotoService.uploadPhoto(createProductPhotoDto)
         );
     }
@@ -121,6 +122,16 @@ class ProductPhotoServiceTests {
         doNothing().when(fileUtils).delete(any(), any());
 
         assertDoesNotThrow(() -> productPhotoService.deletePhoto(1L));
+    }
+
+    @Test
+    public void deletePhotoTest_UnhappyPath_ProductDoesNotHaveAPhotoUploadedYetException() {
+        when(productService.getProduct(any())).thenReturn(product1());
+
+        assertThrows(
+                ProductDoesNotHaveAPhotoUploadedYetException.class,
+                () -> productPhotoService.deletePhoto(1L)
+        );
     }
 
     @Test

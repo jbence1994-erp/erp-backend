@@ -5,7 +5,8 @@ import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoNotFoundException;
@@ -50,8 +51,13 @@ public class UserProfilePhotoService extends PhotoService<CreateUserProfilePhoto
     }
 
     @Override
-    protected RuntimeException alreadyHasPhotoUploadedException(Long id) {
-        return new UserProfileAlreadyHasPhotoUploadedException(id);
+    protected RuntimeException alreadyHasAPhotoUploadedException(Long id) {
+        return new UserProfileAlreadyHasAPhotoUploadedException(id);
+    }
+
+    @Override
+    protected RuntimeException doesNotHaveAPhotoUploadedYetException(Long id) {
+        return new UserProfileDoesNotHaveAPhotoUploadedYetException(id);
     }
 
     @Override

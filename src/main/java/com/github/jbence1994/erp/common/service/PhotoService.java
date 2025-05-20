@@ -24,7 +24,9 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
 
     protected abstract D dto(Long id, byte[] photoBytes, String extension);
 
-    protected abstract RuntimeException alreadyHasPhotoUploadedException(Long id);
+    protected abstract RuntimeException alreadyHasAPhotoUploadedException(Long id);
+
+    protected abstract RuntimeException doesNotHaveAPhotoUploadedYetException(Long id);
 
     protected abstract RuntimeException photoUploadException(Long id);
 
@@ -44,7 +46,7 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
             var entity = getEntity(entityId);
 
             if (entity.hasPhoto()) {
-                throw alreadyHasPhotoUploadedException(entityId);
+                throw alreadyHasAPhotoUploadedException(entityId);
             }
 
             String fileName = createFileName(createPhotoDto);
@@ -85,6 +87,10 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
     public void deletePhoto(Long id) {
         try {
             var entity = getEntity(id);
+
+            if (!entity.hasPhoto()) {
+                throw doesNotHaveAPhotoUploadedYetException(id);
+            }
 
             fileUtils.delete(
                     photoUploadDirectoryPath,

@@ -7,7 +7,8 @@ import com.github.jbence1994.erp.common.mapper.MultipartFileToCreatePhotoDtoMapp
 import com.github.jbence1994.erp.common.service.PhotoService;
 import com.github.jbence1994.erp.identity.dto.CreateUserProfilePhotoDto;
 import com.github.jbence1994.erp.identity.dto.UserProfilePhotoDto;
-import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.identity.exception.UserProfileDoesNotHaveAPhotoUploadedYetException;
 import com.github.jbence1994.erp.identity.exception.UserProfileNotFoundException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDeleteException;
 import com.github.jbence1994.erp.identity.exception.UserProfilePhotoDownloadException;
@@ -57,7 +58,7 @@ public class UserProfilePhotoController {
         } catch (
                 EmptyFileException |
                 InvalidFileExtensionException |
-                UserProfileAlreadyHasPhotoUploadedException exception
+                UserProfileAlreadyHasAPhotoUploadedException exception
         ) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -103,6 +104,10 @@ public class UserProfilePhotoController {
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .build();
+        } catch (UserProfileDoesNotHaveAPhotoUploadedYetException exception) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(exception.getMessage());
         } catch (UserProfilePhotoDeleteException exception) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
