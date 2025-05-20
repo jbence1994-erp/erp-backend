@@ -15,7 +15,7 @@ numbers:
 - [Maven 3.9.6](https://maven.apache.org/download.cgi)
 
 Run project locally
------------------------
+-------------------
 
 Be sure to copy `.env.example` to `.env` and update it with your local database connection parameters before running the
 application.
