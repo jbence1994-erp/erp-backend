@@ -24,11 +24,15 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
 
     protected abstract D dto(Long id, byte[] photoBytes, String extension);
 
-    protected abstract RuntimeException alreadyHasPhotoUploadedException(Long id);
+    protected abstract RuntimeException alreadyHasAPhotoUploadedException(Long id);
+
+    protected abstract RuntimeException doesNotHaveAPhotoUploadedYetException(Long id);
 
     protected abstract RuntimeException photoUploadException(Long id);
 
     protected abstract RuntimeException photoDownloadException(Long id);
+
+    protected abstract RuntimeException photoDeleteException(Long id);
 
     protected abstract RuntimeException photoNotFoundException(Long id);
 
@@ -42,7 +46,7 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
             var entity = getEntity(entityId);
 
             if (entity.hasPhoto()) {
-                throw alreadyHasPhotoUploadedException(entityId);
+                throw alreadyHasAPhotoUploadedException(entityId);
             }
 
             String fileName = createFileName(createPhotoDto);
@@ -56,7 +60,7 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
             updateEntity(entity);
 
             return fileName;
-        } catch (IOException e) {
+        } catch (IOException exception) {
             throw photoUploadException(entityId);
         }
     }
@@ -75,8 +79,28 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
             );
 
             return dto(id, photoBytes, entity.getPhotoFileExtension());
-        } catch (IOException e) {
+        } catch (IOException exception) {
             throw photoDownloadException(id);
+        }
+    }
+
+    public void deletePhoto(Long id) {
+        try {
+            var entity = getEntity(id);
+
+            if (!entity.hasPhoto()) {
+                throw doesNotHaveAPhotoUploadedYetException(id);
+            }
+
+            fileUtils.delete(
+                    photoUploadDirectoryPath,
+                    entity.getPhotoFileName()
+            );
+
+            entity.setPhotoFileName(null);
+            updateEntity(entity);
+        } catch (IOException exception) {
+            throw photoDeleteException(id);
         }
     }
 }
