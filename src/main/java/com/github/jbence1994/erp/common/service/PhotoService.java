@@ -90,6 +90,9 @@ public abstract class PhotoService<C extends CreatePhotoDto, D extends PhotoDto,
                     photoUploadDirectoryPath,
                     entity.getPhotoFileName()
             );
+
+            entity.setPhotoFileName(null);
+            updateEntity(entity);
         } catch (IOException exception) {
             throw photoDeleteException(id);
         }
