@@ -5,7 +5,9 @@ import com.github.jbence1994.erp.common.util.FileUtils;
 import com.github.jbence1994.erp.common.validation.FileValidator;
 import com.github.jbence1994.erp.inventory.dto.CreateProductPhotoDto;
 import com.github.jbence1994.erp.inventory.dto.ProductPhotoDto;
-import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductAlreadyHasAPhotoUploadedException;
+import com.github.jbence1994.erp.inventory.exception.ProductDoesNotHaveAPhotoUploadedYetException;
+import com.github.jbence1994.erp.inventory.exception.ProductPhotoDeleteException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoDownloadException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoNotFoundException;
 import com.github.jbence1994.erp.inventory.exception.ProductPhotoUploadException;
@@ -49,8 +51,13 @@ public class ProductPhotoService extends PhotoService<CreateProductPhotoDto, Pro
     }
 
     @Override
-    protected RuntimeException alreadyHasPhotoUploadedException(Long id) {
-        return new ProductAlreadyHasPhotoUploadedException(id);
+    protected RuntimeException alreadyHasAPhotoUploadedException(Long id) {
+        return new ProductAlreadyHasAPhotoUploadedException(id);
+    }
+
+    @Override
+    protected RuntimeException doesNotHaveAPhotoUploadedYetException(Long id) {
+        return new ProductDoesNotHaveAPhotoUploadedYetException(id);
     }
 
     @Override
@@ -61,6 +68,11 @@ public class ProductPhotoService extends PhotoService<CreateProductPhotoDto, Pro
     @Override
     protected RuntimeException photoDownloadException(Long id) {
         return new ProductPhotoDownloadException(id);
+    }
+
+    @Override
+    protected RuntimeException photoDeleteException(Long id) {
+        return new ProductPhotoDeleteException(id);
     }
 
     @Override
