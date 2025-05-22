@@ -106,7 +106,7 @@ class ProductPhotoControllerTests {
                         1L,
                         multipartFile(),
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép feltöltése az alábbi termékhez: #1 sikeretelen volt"
+                        "Fénykép feltöltése az alábbi termékhez: #1 sikertelen volt"
                 )
         );
     }
@@ -162,7 +162,7 @@ class ProductPhotoControllerTests {
                         new ProductPhotoDownloadException(1L),
                         1L,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép letöltése az alábbi termékhez: #1 sikeretelen volt"
+                        "Fénykép letöltése az alábbi termékhez: #1 sikertelen volt"
                 )
         );
     }
@@ -208,7 +208,7 @@ class ProductPhotoControllerTests {
                         new ProductPhotoDeleteException(1L),
                         1L,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép törlése az alábbi terméknél: #1 sikeretelen volt"
+                        "Fénykép törlése az alábbi terméknél: #1 sikertelen volt"
                 )
         );
     }

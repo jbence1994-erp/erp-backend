@@ -5,7 +5,7 @@ import org.springframework.util.StringUtils;
 public abstract class PhotoEntity {
     public abstract String getPhotoFileName();
 
-    public abstract void setPhotoFileName(String fileName);
+    public abstract void setPhotoFileName(String photoFileName);
 
     public boolean hasPhoto() {
         return getPhotoFileName() != null;
