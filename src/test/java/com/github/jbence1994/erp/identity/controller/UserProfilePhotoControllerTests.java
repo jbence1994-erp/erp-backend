@@ -106,7 +106,7 @@ class UserProfilePhotoControllerTests {
                         1L,
                         multipartFile(),
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép feltöltése az alábbi felhasználói fiókhoz: #1 sikeretelen volt"
+                        "Fénykép feltöltése az alábbi felhasználói fiókhoz: #1 sikertelen volt"
                 )
         );
     }
@@ -162,7 +162,7 @@ class UserProfilePhotoControllerTests {
                         new UserProfilePhotoDownloadException(1L),
                         1L,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép letöltése az alábbi felhasználói fiókhoz: #1 sikeretelen volt"
+                        "Fénykép letöltése az alábbi felhasználói fiókhoz: #1 sikertelen volt"
                 )
         );
     }
@@ -208,7 +208,7 @@ class UserProfilePhotoControllerTests {
                         new UserProfilePhotoDeleteException(1L),
                         1L,
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Fénykép törlése az alábbi felhasználói fióknál: #1 sikeretelen volt"
+                        "Fénykép törlése az alábbi felhasználói fióknál: #1 sikertelen volt"
                 )
         );
     }
