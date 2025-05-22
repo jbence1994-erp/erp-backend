@@ -22,7 +22,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .orElseThrow(() -> new UserProfileNotFoundException(id));
     }
 
-    public UserProfile getDeletedUserProfile(Long id) {
+    private UserProfile getDeletedUserProfile(Long id) {
         return userProfileRepository.findById(id)
                 .orElseThrow(() -> new UserProfileNotFoundException(id));
     }
