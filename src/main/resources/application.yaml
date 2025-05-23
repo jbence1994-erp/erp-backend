@@ -10,6 +10,10 @@ spring:
     driver-class-name: org.h2.Driver
   flyway:
     enabled: false
+  servlet:
+    multipart:
+      max-request-size: 10485760
+      max-file-size: 10485760
 
 erp:
   file-extensions-config:
