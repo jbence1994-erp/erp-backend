@@ -12,8 +12,7 @@ spring:
     enabled: false
   servlet:
     multipart:
-      max-request-size: 10485760
-      max-file-size: 10485760
+      max-file-size: 1048576 # 1MB
 
 erp:
   file-extensions-config:
