@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface PhotoTestConstants {
-    Integer FILE_SIZE = 10_485_760;
+    Integer FILE_SIZE = 10_485_76;
     String JPG = "jpg";
     String JPEG = "jpeg";
     String PNG = "png";
