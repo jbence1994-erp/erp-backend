@@ -13,7 +13,8 @@ public class UserProfileToUserIdentityMapperImpl implements UserProfileToUserIde
                 userProfile.getId(),
                 userProfile.getEmail(),
                 userProfile.getFirstName(),
-                userProfile.getLastName()
+                userProfile.getLastName(),
+                userProfile.getRole()
         );
     }
 }

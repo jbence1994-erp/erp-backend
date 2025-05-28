@@ -42,6 +42,7 @@ public class JwtServiceImpl implements JwtService {
                 .add("email", identity.email())
                 .add("firstName", identity.firstName())
                 .add("lastName", identity.lastName())
+                .add("role", identity.role())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .build();
