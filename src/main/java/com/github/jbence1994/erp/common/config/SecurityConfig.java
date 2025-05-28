@@ -1,11 +1,9 @@
 package com.github.jbence1994.erp.common.config;
 
 import com.github.jbence1994.erp.common.filter.JwtAuthenticationFilter;
-import com.github.jbence1994.erp.common.model.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -22,12 +20,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final List<SecurityRules> securityRules;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -51,12 +52,10 @@ public class SecurityConfig {
         http
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(registry -> registry
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
-                        .requestMatchers("/api/products/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                        .requestMatchers("/api/userProfiles/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(registry -> {
+                            securityRules.forEach(r -> r.configure(registry));
+                            registry.anyRequest().authenticated();
+                        }
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(configurer -> {

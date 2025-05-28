@@ -180,6 +180,7 @@
                         <exclude>com/github/jbence1994/erp/common/dto/CreatePhotoDto*</exclude>
                         <exclude>com/github/jbence1994/erp/common/util/FileSystemUtils*</exclude>
                         <exclude>com/github/jbence1994/erp/identity/config/*</exclude>
+                        <exclude>com/github/jbence1994/erp/inventory/config/*</exclude>
                         <exclude>com/github/jbence1994/erp/Application*</exclude>
                     </excludes>
                 </configuration>
