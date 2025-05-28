@@ -1,7 +1,10 @@
 package com.github.jbence1994.erp.identity.model;
 
 import com.github.jbence1994.erp.common.model.PhotoEntity;
+import com.github.jbence1994.erp.common.model.Role;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +32,9 @@ public class UserProfile extends PhotoEntity {
     private String password;
 
     private String photoFileName;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private boolean isDeleted;
 
