@@ -2,6 +2,7 @@ package com.github.jbence1994.erp.common.service;
 
 import com.github.jbence1994.erp.common.config.JwtConfig;
 import com.github.jbence1994.erp.common.dto.UserIdentity;
+import com.github.jbence1994.erp.common.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -33,6 +34,16 @@ public class JwtServiceImpl implements JwtService {
         } catch (JwtException exception) {
             return null;
         }
+    }
+
+    @Override
+    public Long getUserIdFromToken(String token) {
+        return Long.valueOf(getClaims(token).getSubject());
+    }
+
+    @Override
+    public Role getRoleFromToken(String token) {
+        return Role.valueOf(getClaims(token).get("role", String.class));
     }
 
     private Jwt generateToken(UserIdentity identity, long tokenExpiration) {
