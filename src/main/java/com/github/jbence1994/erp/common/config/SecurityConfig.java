@@ -1,6 +1,7 @@
 package com.github.jbence1994.erp.common.config;
 
 import com.github.jbence1994.erp.common.filter.JwtAuthenticationFilter;
+import com.github.jbence1994.erp.common.model.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,12 +49,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .sessionManagement(c -> c
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(c -> c
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/refresh").permitAll()
+                .authorizeHttpRequests(registry -> registry
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+                        .requestMatchers("/api/products/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                        .requestMatchers("/api/userProfiles/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
