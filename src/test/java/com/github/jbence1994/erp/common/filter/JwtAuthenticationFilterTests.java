@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.common.filter;
 
+import com.github.jbence1994.erp.common.model.Role;
 import com.github.jbence1994.erp.common.service.Jwt;
 import com.github.jbence1994.erp.common.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -21,7 +22,8 @@ import static com.github.jbence1994.erp.common.constant.AuthTestConstants.BEARER
 import static com.github.jbence1994.erp.common.constant.AuthTestConstants.INVALID_BEARER_TOKEN;
 import static com.github.jbence1994.erp.common.constant.AuthTestConstants.MALFORMED_BEARER_TOKEN;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -57,8 +59,9 @@ class JwtAuthenticationFilterTests {
 
         var parsedJwt = mock(Jwt.class);
         when(jwtService.parseToken(any())).thenReturn(parsedJwt);
+        when(jwtService.getRoleFromToken(any())).thenReturn(Role.ADMIN);
+        when(jwtService.getUserIdFromToken(any())).thenReturn(1L);
         when(parsedJwt.isExpired()).thenReturn(false);
-        when(parsedJwt.getUserId()).thenReturn(1L);
 
         filter.doFilterInternal(request, response, filterChain);
 
@@ -69,7 +72,8 @@ class JwtAuthenticationFilterTests {
         assertThat(auth).isInstanceOf(UsernamePasswordAuthenticationToken.class);
         assertThat(auth.getPrincipal()).isEqualTo(1L);
         assertThat(auth.getCredentials()).isNull();
-        assertTrue(auth.getAuthorities().isEmpty());
+        assertFalse(auth.getAuthorities().isEmpty());
+        assertEquals(1, auth.getAuthorities().size());
 
         verify(filterChain).doFilter(request, response);
     }

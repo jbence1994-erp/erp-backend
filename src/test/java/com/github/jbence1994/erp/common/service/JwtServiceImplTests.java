@@ -1,6 +1,7 @@
 package com.github.jbence1994.erp.common.service;
 
 import com.github.jbence1994.erp.common.config.JwtConfig;
+import com.github.jbence1994.erp.common.model.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,5 +87,19 @@ class JwtServiceImplTests {
         var result = jwtService.parseToken(MALFORMED_TOKEN);
 
         assertNull(result);
+    }
+
+    @Test
+    public void getUserIdFromTokenTest() {
+        var result = jwtService.getUserIdFromToken(jwtService.generateAccessToken(userIdentity1()).toString());
+
+        assertEquals(1L, result);
+    }
+
+    @Test
+    public void getRoleFromTokenTest() {
+        var result = jwtService.getRoleFromToken(jwtService.generateAccessToken(userIdentity1()).toString());
+
+        assertEquals(Role.ADMIN, result);
     }
 }
