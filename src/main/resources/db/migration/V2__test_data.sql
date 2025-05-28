@@ -17,8 +17,8 @@ VALUES ('Wireless Mouse', 'WM-1001', 15.50, 'pcs', 'Ergonomic wireless mouse wit
        ('HD Webcam', 'WC-9009', 49.99, 'pcs', '1080p USB webcam with built-in mic.', 5, 65, NULL),
        ('Portable Speaker', 'PS-1010', 34.99, 'pcs', 'Bluetooth speaker with 10 h battery life.', 5, 90, NULL);
 
-INSERT INTO user_profiles (first_name, last_name, email, password, photo_file_name, is_deleted)
-VALUES ('Alice', 'Smith', 'alice.smith@example.com', '$2a$10$g1jri8EeEoYAZKze9yWdkuM06KzWxmEfqg0a5cA7I5jfew8ljHjhC', NULL, 0),
-       ('Bob', 'Johnson', 'bob.johnson@example.com', '$2a$10$opMsK7wLet5T4Fj4/5Xe7uWAISjOCwTOPANVGToeyhdUgVSmKS4g.', NULL, 0),
-       ('Charlie', 'Williams', 'charlie.williams@example.com', '$2a$10$iiZeeCMgp.r9i.OBCNcimOZpUONG8wZZ2VoY0vt2rwhVnngiYHhK6', NULL, 0),
-       ('Diana', 'Brown', 'diana.brown@example.com', '$2a$10$yNPCJfAa1Tso/vryjAWT/ex1Kkil4jZm4cAOcwStZyARA5Gy2Kpjm', NULL, 1);
+INSERT INTO user_profiles (first_name, last_name, email, password, photo_file_name, role, is_deleted)
+VALUES ('Alice', 'Smith', 'alice.smith@example.com', '$2a$10$g1jri8EeEoYAZKze9yWdkuM06KzWxmEfqg0a5cA7I5jfew8ljHjhC', NULL, 'ADMIN', 0),
+       ('Bob', 'Johnson', 'bob.johnson@example.com', '$2a$10$opMsK7wLet5T4Fj4/5Xe7uWAISjOCwTOPANVGToeyhdUgVSmKS4g.', NULL, 'USER', 0),
+       ('Charlie', 'Williams', 'charlie.williams@example.com', '$2a$10$iiZeeCMgp.r9i.OBCNcimOZpUONG8wZZ2VoY0vt2rwhVnngiYHhK6', NULL, 'USER', 0),
+       ('Diana', 'Brown', 'diana.brown@example.com', '$2a$10$yNPCJfAa1Tso/vryjAWT/ex1Kkil4jZm4cAOcwStZyARA5Gy2Kpjm', NULL, 'USER', 1);

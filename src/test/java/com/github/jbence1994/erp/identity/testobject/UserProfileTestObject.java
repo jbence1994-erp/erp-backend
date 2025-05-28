@@ -1,5 +1,6 @@
 package com.github.jbence1994.erp.identity.testobject;
 
+import com.github.jbence1994.erp.common.model.Role;
 import com.github.jbence1994.erp.identity.model.UserProfile;
 
 import static com.github.jbence1994.erp.common.constant.PhotoTestConstants.PHOTO_FILE_NAME;
@@ -17,6 +18,7 @@ public final class UserProfileTestObject {
                 USER_PROFILE_1_EMAIL,
                 USER_PROFILE_1_HASHED_NEW_PASSWORD,
                 null,
+                Role.USER,
                 false
         );
     }
@@ -29,6 +31,7 @@ public final class UserProfileTestObject {
                 USER_PROFILE_1_EMAIL,
                 USER_PROFILE_1_HASHED_NEW_PASSWORD,
                 PHOTO_FILE_NAME,
+                Role.USER,
                 false
         );
     }
@@ -41,6 +44,7 @@ public final class UserProfileTestObject {
                 USER_PROFILE_1_EMAIL,
                 USER_PROFILE_1_HASHED_NEW_PASSWORD,
                 null,
+                Role.USER,
                 true
         );
     }
