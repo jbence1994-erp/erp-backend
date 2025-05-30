@@ -7,8 +7,8 @@ erp
 <p>
   <img
     src="./images/logo.jpg"
-    alt="The Genealogy Project logo"
-    title="The Genealogy Project logo"
+    alt="erp logo"
+    title="erp logo"
     width="306"
     height="306"
   />
