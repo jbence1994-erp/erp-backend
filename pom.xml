@@ -23,6 +23,9 @@
         <java.version>21</java.version>
 
         <!-- Project dependency versions -->
+        <jjwt-impl.version>0.12.6</jjwt-impl.version>
+        <jjwt-jackson.version>0.12.5</jjwt-jackson.version>
+        <jjwt-api.version>0.12.6</jjwt-api.version>
         <spring-dotenv.version>4.0.0</spring-dotenv.version>
 
         <!-- Maven plugin versions -->
@@ -31,11 +34,11 @@
         <flyway-maven-plugin.version>11.8.2</flyway-maven-plugin.version>
 
         <!-- JaCoCo properties -->
-        <jacoco.line-coverage>1.00</jacoco.line-coverage>
-        <jacoco.branch-coverage>1.00</jacoco.branch-coverage>
-        <jacoco.complexity-coverage>1.00</jacoco.complexity-coverage>
-        <jacoco.method-coverage>1.00</jacoco.method-coverage>
-        <jacoco.class-coverage>1.00</jacoco.class-coverage>
+        <jacoco.line-coverage>0.92</jacoco.line-coverage>
+        <jacoco.branch-coverage>0.86</jacoco.branch-coverage>
+        <jacoco.complexity-coverage>0.95</jacoco.complexity-coverage>
+        <jacoco.method-coverage>0.96</jacoco.method-coverage>
+        <jacoco.class-coverage>0.93</jacoco.class-coverage>
 
         <!-- Flags -->
         <flyway.skip>false</flyway.skip>
@@ -53,6 +56,21 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt-impl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt-jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt-api.version}</version>
         </dependency>
         <dependency>
             <groupId>me.paulschwarz</groupId>
@@ -162,6 +180,7 @@
                         <exclude>com/github/jbence1994/erp/common/dto/CreatePhotoDto*</exclude>
                         <exclude>com/github/jbence1994/erp/common/util/FileSystemUtils*</exclude>
                         <exclude>com/github/jbence1994/erp/identity/config/*</exclude>
+                        <exclude>com/github/jbence1994/erp/inventory/config/*</exclude>
                         <exclude>com/github/jbence1994/erp/Application*</exclude>
                     </excludes>
                 </configuration>

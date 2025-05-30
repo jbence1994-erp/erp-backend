@@ -6,6 +6,8 @@ import com.github.jbence1994.erp.identity.model.UserProfile;
 public interface UserProfileService {
     UserProfile getUserProfile(Long id);
 
+    UserProfile getUserProfile(String email);
+
     UserProfile createUserProfile(UserProfile userProfile);
 
     void updateUserProfile(UserProfile userProfile);

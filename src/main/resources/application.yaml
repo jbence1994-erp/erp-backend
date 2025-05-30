@@ -8,6 +8,11 @@ spring:
       max-file-size: 1048576 # 1MB
 
 erp:
+  jwt:
+    secret: ${JWT_SECRET_KEY}
+    accessTokenExpiration: 300 # 5m
+    refreshTokenExpiration: 604800 # 7d
+
   file-extensions-config:
     allowed-file-extensions: jpg,jpeg,png,bmp
 

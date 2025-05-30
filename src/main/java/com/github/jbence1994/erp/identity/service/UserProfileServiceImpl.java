@@ -28,6 +28,13 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    public UserProfile getUserProfile(String email) {
+        return userProfileRepository.findByEmail(email)
+                .filter(userProfile -> !userProfile.isDeleted())
+                .orElseThrow(() -> new UserProfileNotFoundException(email));
+    }
+
+    @Override
     public UserProfile createUserProfile(UserProfile userProfile) {
         userProfile.updatePassword(passwordManager.encode(userProfile.getPassword()));
 
